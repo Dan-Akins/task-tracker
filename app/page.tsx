@@ -85,7 +85,7 @@ export default async function Home() {
               </div>
             </div>
 
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-4">
               {tasks.map((task) => (
                 <TaskCard
                   key={task.id}

@@ -11,8 +11,8 @@ const statusConfig: Record<
   todo: {
     label: "To Do",
     badge: "bg-slate-100 text-slate-600",
-    accent: "bg-slate-400",
-    dot: "bg-slate-400",
+    accent: "bg-zinc-400",
+    dot: "bg-zinc-400",
   },
   in_progress: {
     label: "In Progress",
