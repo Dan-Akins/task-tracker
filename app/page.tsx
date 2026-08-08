@@ -33,7 +33,7 @@ export default async function Home() {
 
         <header className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-lg font-semibold text-gray-900 sm:text-2xl dark:text-white">Task Tracker</h1>
+            <h1 className="text-lg font-semibold text-gray-900 sm:text-2xl dark:text-gray-50">Task Tracker</h1>
             <p className="mt-0.5 text-xs text-gray-500 sm:text-sm dark:text-gray-400">
               {tasks.length} task{tasks.length !== 1 ? "s" : ""}
             </p>
@@ -44,7 +44,7 @@ export default async function Home() {
             <form action={handleSignOut}>
               <button
                 type="submit"
-                className="bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-md text-xs sm:text-sm sm:px-4 hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                className="bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-md text-xs sm:text-sm sm:px-4 hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"
               >
                 Sign out
               </button>

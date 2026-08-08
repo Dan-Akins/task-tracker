@@ -10,7 +10,7 @@ const statusConfig: Record<
 > = {
   todo: {
     label: "To Do",
-    badge: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
+    badge: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-400",
     accent: "bg-gray-400",
     dot: "bg-gray-400",
   },
@@ -39,7 +39,7 @@ const nextAction: Record<TaskStatus, { label: string; style: string }> = {
   },
   done: {
     label: "Reset",
-    style: "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600",
+    style: "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-600",
   },
 };
 
@@ -72,7 +72,7 @@ export default function TaskCard({ id, title, description, status, createdAt }: 
       <span className={`w-1.5 shrink-0 ${cfg.accent}`} />
       <div className="flex flex-col gap-2 flex-1 min-w-0 px-4 py-2.5">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-gray-900 leading-snug min-w-0 truncate sm:text-base dark:text-white">{title}</p>
+          <p className="text-sm font-semibold text-gray-900 leading-snug min-w-0 truncate sm:text-base dark:text-gray-50">{title}</p>
           <span
             className={`flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-medium shrink-0 ${cfg.badge}`}
           >

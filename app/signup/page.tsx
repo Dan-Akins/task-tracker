@@ -49,7 +49,7 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 dark:bg-gray-900">
       <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-semibold text-gray-900 text-center mb-8 dark:text-white">Create account</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 text-center mb-8 dark:text-gray-50">Create account</h1>
 
         <form
           onSubmit={handleSubmit}
@@ -62,7 +62,7 @@ export default function SignupPage() {
           )}
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-400">
               Email
             </label>
             <input
@@ -71,12 +71,12 @@ export default function SignupPage() {
               type="email"
               required
               autoComplete="email"
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder:text-gray-500"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-700 dark:border-gray-700 dark:text-gray-50 dark:placeholder:text-gray-400"
             />
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-400">
               Password
               <span className="ml-1 text-xs font-normal text-gray-400">(min 8 characters)</span>
             </label>
@@ -87,7 +87,7 @@ export default function SignupPage() {
               required
               minLength={8}
               autoComplete="new-password"
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder:text-gray-500"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-700 dark:border-gray-700 dark:text-gray-50 dark:placeholder:text-gray-400"
             />
           </div>
 
