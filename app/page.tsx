@@ -28,23 +28,23 @@ export default async function Home() {
   const done = tasks.filter((t) => t.status === "done");
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-8 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 dark:bg-gray-900">
       <div className="mx-auto max-w-2xl space-y-6">
 
-        <header className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Task Tracker</h1>
-            <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+        <header className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-lg font-semibold text-gray-900 sm:text-2xl dark:text-white">Task Tracker</h1>
+            <p className="mt-0.5 text-xs text-gray-500 sm:text-sm dark:text-gray-400">
               {tasks.length} task{tasks.length !== 1 ? "s" : ""}
             </p>
           </div>
-          <div className="flex items-center gap-3 pt-1 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <p className="text-sm text-gray-500 hidden sm:block dark:text-gray-400">{session.user.email}</p>
             <ThemeToggle />
             <form action={handleSignOut}>
               <button
                 type="submit"
-                className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                className="bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-md text-xs sm:text-sm sm:px-4 hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
               >
                 Sign out
               </button>

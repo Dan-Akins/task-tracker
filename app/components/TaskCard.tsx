@@ -71,8 +71,8 @@ export default function TaskCard({ id, title, description, status, createdAt }: 
     <li className={`flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 dark:bg-gray-800 dark:border-gray-700${status === "done" ? " opacity-60" : ""}`}>
       <span className={`w-1.5 shrink-0 ${cfg.accent}`} />
       <div className="flex flex-col gap-2 flex-1 min-w-0 px-4 py-2.5">
-        <div className="flex items-center justify-between gap-4">
-          <p className="text-base font-semibold text-gray-900 leading-snug dark:text-white">{title}</p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm font-semibold text-gray-900 leading-snug min-w-0 truncate sm:text-base dark:text-white">{title}</p>
           <span
             className={`flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-medium shrink-0 ${cfg.badge}`}
           >

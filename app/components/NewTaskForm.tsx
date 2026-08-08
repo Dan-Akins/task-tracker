@@ -18,7 +18,7 @@ export default function NewTaskForm() {
     <form
       ref={formRef}
       action={handleSubmit}
-      className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col gap-4 max-w-[600px] mx-auto w-full dark:bg-gray-800 dark:border-gray-700"
+      className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col gap-4 w-full max-w-[600px] mx-auto dark:bg-gray-800 dark:border-gray-700"
     >
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white">New Task</h2>
 
