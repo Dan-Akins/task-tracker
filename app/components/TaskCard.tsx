@@ -10,36 +10,36 @@ const statusConfig: Record<
 > = {
   todo: {
     label: "To Do",
-    badge: "bg-slate-100 text-slate-600",
-    accent: "bg-zinc-400",
-    dot: "bg-zinc-400",
+    badge: "bg-gray-100 text-gray-700",
+    accent: "bg-gray-400",
+    dot: "bg-gray-400",
   },
   in_progress: {
     label: "In Progress",
-    badge: "bg-amber-50 text-amber-700",
-    accent: "bg-amber-400",
-    dot: "bg-amber-400",
+    badge: "bg-blue-100 text-blue-700",
+    accent: "bg-blue-600",
+    dot: "bg-blue-600",
   },
   done: {
     label: "Done",
-    badge: "bg-emerald-50 text-emerald-700",
-    accent: "bg-emerald-500",
-    dot: "bg-emerald-500",
+    badge: "bg-green-100 text-green-700",
+    accent: "bg-green-600",
+    dot: "bg-green-600",
   },
 };
 
 const nextAction: Record<TaskStatus, { label: string; style: string }> = {
   todo: {
     label: "Start",
-    style: "bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm",
+    style: "bg-blue-600 text-white hover:bg-blue-700",
   },
   in_progress: {
     label: "Complete",
-    style: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm",
+    style: "bg-green-600 text-white hover:bg-green-700",
   },
   done: {
     label: "Reset",
-    style: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm",
+    style: "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50",
   },
 };
 
@@ -68,13 +68,13 @@ export default function TaskCard({ id, title, description, status, createdAt }: 
   const action = nextAction[status];
 
   return (
-    <li className="flex overflow-hidden rounded-2xl border border-zinc-100 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+    <li className="flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
       <span className={`w-1.5 shrink-0 ${cfg.accent}`} />
-      <div className="flex flex-col gap-3 flex-1 min-w-0 bg-white px-6 py-5">
+      <div className="flex flex-col gap-3 flex-1 min-w-0 p-4">
         <div className="flex items-start justify-between gap-4">
-          <p className="text-base font-semibold text-zinc-900 leading-snug">{title}</p>
+          <p className="text-lg font-semibold text-gray-900 leading-snug">{title}</p>
           <span
-            className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium shrink-0 ${cfg.badge}`}
+            className={`flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium shrink-0 ${cfg.badge}`}
           >
             <span className={`size-1.5 rounded-full ${cfg.dot}`} />
             {cfg.label}
@@ -82,15 +82,15 @@ export default function TaskCard({ id, title, description, status, createdAt }: 
         </div>
 
         {description && (
-          <p className="text-sm text-zinc-500 line-clamp-2 leading-relaxed">{description}</p>
+          <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">{description}</p>
         )}
 
         <div className="flex items-center justify-between gap-4">
-          <span className="text-xs text-zinc-400">{date}</span>
+          <span className="text-sm text-gray-500">{date}</span>
           <button
             onClick={handleCycle}
             disabled={pending}
-            className={`rounded-lg px-4 py-1.5 text-xs font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${action.style}`}
+            className={`rounded-md px-4 py-2 text-xs font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${action.style}`}
           >
             {pending ? "…" : action.label}
           </button>

@@ -22,28 +22,27 @@ export default async function Home() {
     await signOut({ redirectTo: "/login" });
   }
 
-  const counts = {
-    todo: tasks.filter((t) => t.status === "todo").length,
-    in_progress: tasks.filter((t) => t.status === "in_progress").length,
-    done: tasks.filter((t) => t.status === "done").length,
-  };
+  const inProgress = tasks.filter((t) => t.status === "in_progress");
+  const todo = tasks.filter((t) => t.status === "todo");
+  const done = tasks.filter((t) => t.status === "done");
 
   return (
-    <div className="min-h-screen bg-zinc-50 px-4 py-12">
-      <div className="mx-auto max-w-2xl flex flex-col gap-8">
+    <div className="min-h-screen bg-gray-50 px-6 py-8">
+      <div className="mx-auto max-w-2xl space-y-6">
+
         <header className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-zinc-900">Task Tracker</h1>
-            <p className="mt-1 text-sm text-zinc-500">
+            <h1 className="text-2xl font-semibold text-gray-900">Task Tracker</h1>
+            <p className="mt-0.5 text-sm text-gray-500">
               {tasks.length} task{tasks.length !== 1 ? "s" : ""}
             </p>
           </div>
           <div className="flex items-center gap-3 pt-1 shrink-0">
-            <p className="text-sm text-zinc-500 hidden sm:block">{session.user.email}</p>
+            <p className="text-sm text-gray-500 hidden sm:block">{session.user.email}</p>
             <form action={handleSignOut}>
               <button
                 type="submit"
-                className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 transition-colors"
+                className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm hover:bg-gray-50 transition-colors"
               >
                 Sign out
               </button>
@@ -55,49 +54,64 @@ export default async function Home() {
 
         {tasks.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-16">
-            <div className="size-12 rounded-full bg-zinc-100 flex items-center justify-center text-2xl">
-              ✓
-            </div>
-            <p className="text-sm text-zinc-400">No tasks yet — add one above.</p>
+            <p className="text-sm text-gray-500">No tasks yet — add one above.</p>
           </div>
         ) : (
-          <section className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-zinc-500 tracking-normal">
-                Tasks
-              </h2>
-              <div className="flex items-center gap-2">
-                {counts.todo > 0 && (
-                  <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-                    {counts.todo} to do
-                  </span>
-                )}
-                {counts.in_progress > 0 && (
-                  <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
-                    {counts.in_progress} in progress
-                  </span>
-                )}
-                {counts.done > 0 && (
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-                    {counts.done} done
-                  </span>
-                )}
-              </div>
-            </div>
+          <div className="space-y-6">
+            {inProgress.length > 0 && (
+              <section>
+                <h2 className="text-sm font-semibold text-gray-500 mb-3">In Progress</h2>
+                <ul className="space-y-3">
+                  {inProgress.map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      id={task.id}
+                      title={task.title}
+                      description={task.description}
+                      status={task.status}
+                      createdAt={task.createdAt}
+                    />
+                  ))}
+                </ul>
+              </section>
+            )}
 
-            <ul className="flex flex-col gap-4">
-              {tasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  id={task.id}
-                  title={task.title}
-                  description={task.description}
-                  status={task.status}
-                  createdAt={task.createdAt}
-                />
-              ))}
-            </ul>
-          </section>
+            {todo.length > 0 && (
+              <section>
+                <h2 className="text-sm font-semibold text-gray-500 mb-3">To Do</h2>
+                <ul className="space-y-3">
+                  {todo.map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      id={task.id}
+                      title={task.title}
+                      description={task.description}
+                      status={task.status}
+                      createdAt={task.createdAt}
+                    />
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {done.length > 0 && (
+              <section>
+                <h2 className="text-sm font-semibold text-gray-500 mb-3">Done</h2>
+                <ul className="space-y-3">
+                  {done.map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      id={task.id}
+                      title={task.title}
+                      description={task.description}
+                      status={task.status}
+                      createdAt={task.createdAt}
+                    />
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
         )}
       </div>
     </div>
