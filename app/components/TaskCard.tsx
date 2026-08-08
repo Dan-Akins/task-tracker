@@ -39,7 +39,7 @@ const nextAction: Record<TaskStatus, { label: string; style: string }> = {
   },
   done: {
     label: "Reset",
-    style: "border border-zinc-300 text-zinc-600 hover:bg-zinc-50",
+    style: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm",
   },
 };
 
@@ -69,7 +69,7 @@ export default function TaskCard({ id, title, description, status, createdAt }: 
 
   return (
     <li
-      className={`flex flex-col gap-3 rounded-2xl border-l-4 bg-white px-6 py-5 shadow-sm ring-1 ring-zinc-100 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 ${cfg.border}`}
+      className={`flex flex-col gap-3 rounded-2xl border border-zinc-100 border-l-4 bg-white px-6 py-5 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 ${cfg.border}`}
     >
       <div className="flex items-start justify-between gap-4">
         <p className="text-base font-semibold text-zinc-900 leading-snug">{title}</p>
@@ -85,7 +85,7 @@ export default function TaskCard({ id, title, description, status, createdAt }: 
         <p className="text-sm text-zinc-500 line-clamp-2 leading-relaxed">{description}</p>
       )}
 
-      <div className="flex items-center justify-between gap-4 pt-1 border-t border-zinc-50">
+      <div className="flex items-center justify-between gap-4">
         <span className="text-xs text-zinc-400">{date}</span>
         <button
           onClick={handleCycle}
