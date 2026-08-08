@@ -32,13 +32,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 dark:bg-gray-900">
       <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-zinc-900 text-center mb-8">Sign in</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 text-center mb-8 dark:text-white">Sign in</h1>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col gap-4"
+          className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm flex flex-col gap-4 dark:bg-gray-800 dark:border-gray-700"
         >
           {error && (
             <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
@@ -47,7 +47,7 @@ export default function LoginPage() {
           )}
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium text-zinc-700">
+            <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Email
             </label>
             <input
@@ -56,12 +56,12 @@ export default function LoginPage() {
               type="email"
               required
               autoComplete="email"
-              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder:text-gray-500"
             />
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="text-sm font-medium text-zinc-700">
+            <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Password
             </label>
             <input
@@ -70,21 +70,21 @@ export default function LoginPage() {
               type="password"
               required
               autoComplete="current-password"
-              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder:text-gray-500"
             />
           </div>
 
           <button
             type="submit"
             disabled={pending}
-            className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {pending ? "Signing in…" : "Sign in"}
           </button>
 
-          <p className="text-sm text-center text-zinc-500">
+          <p className="text-sm text-center text-gray-500 dark:text-gray-400">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-indigo-600 font-medium hover:underline">
+            <Link href="/signup" className="text-blue-600 font-medium hover:underline">
               Sign up
             </Link>
           </p>

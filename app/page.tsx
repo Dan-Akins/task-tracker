@@ -3,6 +3,7 @@ import { auth, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import NewTaskForm from "@/app/components/NewTaskForm";
 import TaskCard from "@/app/components/TaskCard";
+import ThemeToggle from "@/app/components/ThemeToggle";
 
 export const dynamic = "force-dynamic";
 
@@ -27,22 +28,23 @@ export default async function Home() {
   const done = tasks.filter((t) => t.status === "done");
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-8">
+    <div className="min-h-screen bg-gray-50 px-6 py-8 dark:bg-gray-900">
       <div className="mx-auto max-w-2xl space-y-6">
 
         <header className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Task Tracker</h1>
-            <p className="mt-0.5 text-sm text-gray-500">
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Task Tracker</h1>
+            <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
               {tasks.length} task{tasks.length !== 1 ? "s" : ""}
             </p>
           </div>
           <div className="flex items-center gap-3 pt-1 shrink-0">
-            <p className="text-sm text-gray-500 hidden sm:block">{session.user.email}</p>
+            <p className="text-sm text-gray-500 hidden sm:block dark:text-gray-400">{session.user.email}</p>
+            <ThemeToggle />
             <form action={handleSignOut}>
               <button
                 type="submit"
-                className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm hover:bg-gray-50 transition-colors"
+                className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
               >
                 Sign out
               </button>
@@ -54,13 +56,13 @@ export default async function Home() {
 
         {tasks.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-16">
-            <p className="text-sm text-gray-500">No tasks yet — add one above.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">No tasks yet — add one above.</p>
           </div>
         ) : (
           <div className="space-y-6">
             {inProgress.length > 0 && (
               <section>
-                <h2 className="text-sm font-semibold text-gray-500 mb-3">In Progress</h2>
+                <h2 className="text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">In Progress</h2>
                 <ul className="space-y-3">
                   {inProgress.map((task) => (
                     <TaskCard
@@ -78,7 +80,7 @@ export default async function Home() {
 
             {todo.length > 0 && (
               <section>
-                <h2 className="text-sm font-semibold text-gray-500 mb-3">To Do</h2>
+                <h2 className="text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">To Do</h2>
                 <ul className="space-y-3">
                   {todo.map((task) => (
                     <TaskCard
@@ -96,7 +98,7 @@ export default async function Home() {
 
             {done.length > 0 && (
               <section>
-                <h2 className="text-sm font-semibold text-gray-500 mb-3">Done</h2>
+                <h2 className="text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">Done</h2>
                 <ul className="space-y-3">
                   {done.map((task) => (
                     <TaskCard
