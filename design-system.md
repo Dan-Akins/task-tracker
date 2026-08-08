@@ -38,3 +38,11 @@
   - in_progress: bg-blue-100 text-blue-700
   - done: bg-green-100 text-green-700
 - Input fields: border border-gray-300 rounded-md px-3 py-2 text-sm
+
+
+## Dark Mode
+- Background: #111827 (gray-900)
+- Card background: #1F2937 (gray-800)
+- Text primary: #F9FAFB (gray-50)
+- Text secondary: #9CA3AF (gray-400)
+- Border: #374151 (gray-700)
