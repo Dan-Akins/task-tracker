@@ -68,7 +68,7 @@ export default function TaskCard({ id, title, description, status, createdAt }: 
   const action = nextAction[status];
 
   return (
-    <li className="flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+    <li className={`flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5${status === "done" ? " opacity-60" : ""}`}>
       <span className={`w-1.5 shrink-0 ${cfg.accent}`} />
       <div className="flex flex-col gap-2 flex-1 min-w-0 px-4 py-2.5">
         <div className="flex items-center justify-between gap-4">
