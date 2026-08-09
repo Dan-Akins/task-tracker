@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 const options = [
   { label: "All", value: "" },
-  { label: "Todo", value: "todo" },
+  { label: "To do", value: "todo" },
   { label: "In Progress", value: "in_progress" },
   { label: "Done", value: "done" },
 ] as const;
