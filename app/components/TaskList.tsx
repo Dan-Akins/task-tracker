@@ -1,10 +1,11 @@
 import TaskCard from "@/app/components/TaskCard";
+import { TaskStatus } from "@/app/generated/prisma/enums";
 
 type Task = {
   id: number;
   title: string;
   description: string | null;
-  status: string;
+  status: TaskStatus;
   createdAt: Date;
 };
 
