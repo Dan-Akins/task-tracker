@@ -9,6 +9,8 @@ type Task = {
   description: string | null;
   status: TaskStatus;
   priority: TaskPriority;
+  dueDate: Date | null;
+  category: string | null;
   createdAt: Date;
 };
 
@@ -65,6 +67,8 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
                 description={taskItem.description}
                 status={taskItem.status}
                 priority={taskItem.priority}
+                dueDate={taskItem.dueDate}
+                category={taskItem.category}
                 createdAt={taskItem.createdAt}
               />
             ))}
@@ -87,6 +91,8 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
                 description={taskItem.description}
                 status={taskItem.status}
                 priority={taskItem.priority}
+                dueDate={taskItem.dueDate}
+                category={taskItem.category}
                 createdAt={taskItem.createdAt}
               />
             ))}
@@ -109,6 +115,8 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
                 description={taskItem.description}
                 status={taskItem.status}
                 priority={taskItem.priority}
+                dueDate={taskItem.dueDate}
+                category={taskItem.category}
                 createdAt={taskItem.createdAt}
               />
             ))}

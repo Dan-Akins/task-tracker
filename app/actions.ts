@@ -16,11 +16,14 @@ export async function createTask(formData: FormData) {
   const title = (formData.get("title") as string).trim();
   const description = (formData.get("description") as string | null)?.trim() || null;
   const priority = (formData.get("priority") as TaskPriority) || "medium";
+  const dueDateStr = (formData.get("dueDate") as string | null)?.trim();
+  const dueDate = dueDateStr ? new Date(dueDateStr) : null;
+  const category = (formData.get("category") as string | null)?.trim() || null;
 
   if (!title) return;
 
   await prisma.task.create({
-    data: { title, description, priority, userId },
+    data: { title, description, priority, dueDate, category, userId },
   });
 
   revalidatePath("/");

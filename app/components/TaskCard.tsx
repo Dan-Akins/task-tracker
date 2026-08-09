@@ -55,10 +55,12 @@ interface Props {
   description: string | null;
   status: TaskStatus;
   priority: TaskPriority;
+  dueDate: Date | null;
+  category: string | null;
   createdAt: Date;
 }
 
-export default function TaskCard({ id, title, description, status, priority, createdAt }: Props) {
+export default function TaskCard({ id, title, description, status, priority, dueDate, category, createdAt }: Props) {
   const [pending, startTransition] = useTransition();
 
   function handleCycle() {
@@ -70,6 +72,9 @@ export default function TaskCard({ id, title, description, status, priority, cre
     day: "numeric",
     year: "numeric",
   });
+
+  const isOverdue = dueDate && status !== "done" && new Date() > dueDate;
+  const dueDateStr = dueDate?.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
   const cfg = statusConfig[status];
   const action = nextAction[status];
@@ -89,14 +94,25 @@ export default function TaskCard({ id, title, description, status, priority, cre
           </span>
         </div>
 
+        {category && (
+          <span className="self-start rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+            {category}
+          </span>
+        )}
+
         {description && (
           <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed dark:text-gray-400">{description}</p>
         )}
 
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="text-sm text-gray-500 dark:text-gray-400">{date}</span>
             <span className={`text-xs font-medium ${pri.className}`}>{pri.label}</span>
+            {dueDate && (
+              <span className={`text-xs font-medium ${isOverdue ? "text-red-500 dark:text-red-400" : "text-gray-400 dark:text-gray-500"}`}>
+                Due {dueDateStr}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <button
