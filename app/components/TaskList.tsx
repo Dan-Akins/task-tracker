@@ -52,7 +52,10 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
     <div className="space-y-6">
       {inProgress.length > 0 && (
         <section>
-          <h2 className="text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">In Progress</h2>
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">
+            <span className="size-2 rounded-full bg-blue-600 dark:bg-blue-400" />
+            In Progress
+          </h2>
           <ul className="space-y-3">
             {inProgress.map((taskItem) => (
               <TaskCard
@@ -71,7 +74,10 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
 
       {todo.length > 0 && (
         <section>
-          <h2 className="text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">To Do</h2>
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">
+            <span className="size-2 rounded-full bg-gray-400" />
+            To Do
+          </h2>
           <ul className="space-y-3">
             {todo.map((taskItem) => (
               <TaskCard
@@ -90,7 +96,10 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
 
       {done.length > 0 && (
         <section>
-          <h2 className="text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">Done</h2>
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">
+            <span className="size-2 rounded-full bg-green-600 dark:bg-green-400" />
+            Done
+          </h2>
           <ul className="space-y-3">
             {done.map((taskItem) => (
               <TaskCard
