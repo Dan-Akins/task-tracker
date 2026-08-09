@@ -5,10 +5,10 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { TaskStatus } from "@/app/generated/prisma/enums";
 
-async function getUserId(): Promise<number> {
+async function getUserId(): Promise<string> {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
-  return Number(session.user.id);
+  return session.user.id;
 }
 
 export async function createTask(formData: FormData) {

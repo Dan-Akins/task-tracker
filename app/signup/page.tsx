@@ -78,7 +78,7 @@ export default function SignupPage() {
           <div className="flex flex-col gap-1">
             <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-400">
               Password
-              <span className="ml-1 text-xs font-normal text-gray-400">(min 8 characters)</span>
+              <span className="ml-1 text-xs font-normal text-gray-400">(8+ chars, upper, lower, number, symbol)</span>
             </label>
             <input
               id="password"

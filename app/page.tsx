@@ -15,7 +15,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const userId = Number(session.user.id);
+  const userId = session.user.id;
   const { status: statusFilter } = await searchParams;
 
   const allTasks = await prisma.task.findMany({
