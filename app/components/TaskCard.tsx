@@ -84,7 +84,14 @@ export default function TaskCard({ id, title, description, status, priority, due
       <span className={`w-1.5 shrink-0 ${cfg.accent}`} />
       <div className="flex flex-col gap-2 flex-1 min-w-0 px-4 py-2.5">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-gray-900 leading-snug min-w-0 truncate sm:text-base dark:text-gray-50">{title}</p>
+          <div className="flex items-center gap-2 min-w-0">
+            <p className="text-sm font-semibold text-gray-900 leading-snug min-w-0 truncate sm:text-base dark:text-gray-50">{title}</p>
+            {category && (
+              <span className="shrink-0 rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-600 dark:bg-violet-900/30 dark:text-violet-400">
+                {category}
+              </span>
+            )}
+          </div>
           <span
             className={`flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-medium shrink-0 ${cfg.badge}`}
           >
@@ -93,20 +100,16 @@ export default function TaskCard({ id, title, description, status, priority, due
           </span>
         </div>
 
-        {category && (
-          <span className="self-start rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-600 dark:bg-violet-900/30 dark:text-violet-400">
-            {category}
-          </span>
-        )}
-
         {description && (
           <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed dark:text-gray-400">{description}</p>
         )}
 
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-xs font-medium text-gray-400 dark:text-gray-500">{date}</span>
             {dueDate && (
               <>
+                <span className="text-gray-300 dark:text-gray-600" aria-hidden="true">·</span>
                 <span className={`flex items-center gap-1 text-xs font-medium ${isOverdue ? "text-red-500 dark:text-red-400" : "text-gray-400 dark:text-gray-500"}`}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -116,10 +119,8 @@ export default function TaskCard({ id, title, description, status, priority, due
                   </svg>
                   Due {dueDateStr}
                 </span>
-                <span className="text-gray-300 dark:text-gray-600" aria-hidden="true">·</span>
               </>
             )}
-            <span className="text-xs font-medium text-gray-400 dark:text-gray-500">{date}</span>
             <span className="text-gray-300 dark:text-gray-600" aria-hidden="true">·</span>
             <span className={`flex items-center gap-1 text-xs font-medium ${pri.className}`}>
               <span className={`size-1.5 rounded-full shrink-0 ${pri.dot}`} />
