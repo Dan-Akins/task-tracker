@@ -31,6 +31,16 @@ const statusCycle: Record<TaskStatus, TaskStatus> = {
   done: "todo",
 };
 
+export async function deleteTask(id: number) {
+  const userId = await getUserId();
+
+  await prisma.task.delete({
+    where: { id, userId },
+  });
+
+  revalidatePath("/");
+}
+
 export async function cycleStatus(id: number, current: TaskStatus) {
   const userId = await getUserId();
 
