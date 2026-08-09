@@ -1,31 +1,38 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { auth, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import NewTaskForm from "@/app/components/NewTaskForm";
-import TaskCard from "@/app/components/TaskCard";
+import TaskList from "@/app/components/TaskList";
 import ThemeToggle from "@/app/components/ThemeToggle";
+import StatusFilter from "@/app/components/StatusFilter";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+type SearchParams = Promise<{ status?: string }>;
+
+export default async function Home({ searchParams }: { searchParams: SearchParams }) {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
   const userId = Number(session.user.id);
+  const { status: statusFilter } = await searchParams;
 
-  const tasks = await prisma.task.findMany({
+  const allTasks = await prisma.task.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
   });
+
+  const tasks = statusFilter
+    ? allTasks.filter((t) => t.status === statusFilter)
+    : allTasks;
+
+  const hasAnyTasks = allTasks.length > 0;
 
   async function handleSignOut() {
     "use server";
     await signOut({ redirectTo: "/login" });
   }
-
-  const inProgress = tasks.filter((t) => t.status === "in_progress");
-  const todo = tasks.filter((t) => t.status === "todo");
-  const done = tasks.filter((t) => t.status === "done");
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 dark:bg-gray-900">
@@ -35,7 +42,7 @@ export default async function Home() {
           <div className="min-w-0">
             <h1 className="text-lg font-semibold text-gray-900 sm:text-2xl dark:text-gray-50">Task Tracker</h1>
             <p className="mt-0.5 text-xs text-gray-500 sm:text-sm dark:text-gray-400">
-              {tasks.length} task{tasks.length !== 1 ? "s" : ""}
+              {allTasks.length} task{allTasks.length !== 1 ? "s" : ""}
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -54,76 +61,11 @@ export default async function Home() {
 
         <NewTaskForm />
 
-        {tasks.length === 0 ? (
-          <div className="flex flex-col items-center gap-4 py-20 text-gray-500 dark:text-gray-400">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
-              <rect x="9" y="3" width="6" height="4" rx="1"/>
-              <line x1="9" y1="12" x2="15" y2="12"/>
-              <line x1="9" y1="16" x2="13" y2="16"/>
-            </svg>
-            <div className="text-center">
-              <p className="text-sm font-medium">No tasks yet.</p>
-              <p className="text-sm">Add one above to get started.</p>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {inProgress.length > 0 && (
-              <section>
-                <h2 className="text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">In Progress</h2>
-                <ul className="space-y-3">
-                  {inProgress.map((task) => (
-                    <TaskCard
-                      key={task.id}
-                      id={task.id}
-                      title={task.title}
-                      description={task.description}
-                      status={task.status}
-                      createdAt={task.createdAt}
-                    />
-                  ))}
-                </ul>
-              </section>
-            )}
+        <Suspense>
+          <StatusFilter />
+        </Suspense>
 
-            {todo.length > 0 && (
-              <section>
-                <h2 className="text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">To Do</h2>
-                <ul className="space-y-3">
-                  {todo.map((task) => (
-                    <TaskCard
-                      key={task.id}
-                      id={task.id}
-                      title={task.title}
-                      description={task.description}
-                      status={task.status}
-                      createdAt={task.createdAt}
-                    />
-                  ))}
-                </ul>
-              </section>
-            )}
-
-            {done.length > 0 && (
-              <section>
-                <h2 className="text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">Done</h2>
-                <ul className="space-y-3">
-                  {done.map((task) => (
-                    <TaskCard
-                      key={task.id}
-                      id={task.id}
-                      title={task.title}
-                      description={task.description}
-                      status={task.status}
-                      createdAt={task.createdAt}
-                    />
-                  ))}
-                </ul>
-              </section>
-            )}
-          </div>
-        )}
+        <TaskList tasks={tasks} hasAnyTasks={hasAnyTasks} />
       </div>
     </div>
   );
