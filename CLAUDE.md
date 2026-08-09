@@ -17,3 +17,10 @@ A personal task management app built with Next.js, TypeScript, Tailwind CSS, and
 
 ## Design
 Follow design-system.md for all styling decisions.  Do not deviate from the defined colors, spacing, or components styles without explicit instruction.
+
+## File Structure
+- app/page.tsx: main page, renders TaskList
+- app/components/TaskList.tsx: task list UI Component
+- app/components/NewTaskForm.tsx: new task form component
+- app/actions.ts: server actions for CRUD operations
+- prisma/schema.prisma: database schema
