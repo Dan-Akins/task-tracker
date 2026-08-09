@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { cycleStatus, deleteTask } from "@/app/actions";
-import { TaskStatus } from "@/app/generated/prisma/enums";
+import { TaskPriority, TaskStatus } from "@/app/generated/prisma/enums";
 
 const statusConfig: Record<
   TaskStatus,
@@ -43,15 +43,22 @@ const nextAction: Record<TaskStatus, { label: string; style: string }> = {
   },
 };
 
+const priorityConfig: Record<TaskPriority, { label: string; className: string }> = {
+  high: { label: "High", className: "text-red-600 dark:text-red-400" },
+  medium: { label: "Medium", className: "text-amber-600 dark:text-amber-400" },
+  low: { label: "Low", className: "text-gray-400 dark:text-gray-500" },
+};
+
 interface Props {
   id: number;
   title: string;
   description: string | null;
   status: TaskStatus;
+  priority: TaskPriority;
   createdAt: Date;
 }
 
-export default function TaskCard({ id, title, description, status, createdAt }: Props) {
+export default function TaskCard({ id, title, description, status, priority, createdAt }: Props) {
   const [pending, startTransition] = useTransition();
 
   function handleCycle() {
@@ -66,6 +73,7 @@ export default function TaskCard({ id, title, description, status, createdAt }: 
 
   const cfg = statusConfig[status];
   const action = nextAction[status];
+  const pri = priorityConfig[priority];
 
   return (
     <li className={`flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 dark:bg-gray-800 dark:border-gray-700${status === "done" ? " opacity-60" : ""}`}>
@@ -86,7 +94,10 @@ export default function TaskCard({ id, title, description, status, createdAt }: 
         )}
 
         <div className="flex items-center justify-between gap-4">
-          <span className="text-sm text-gray-500 dark:text-gray-400">{date}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500 dark:text-gray-400">{date}</span>
+            <span className={`text-xs font-medium ${pri.className}`}>{pri.label}</span>
+          </div>
           <div className="flex items-center gap-2">
             <button
               onClick={handleCycle}

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { TaskStatus } from "@/app/generated/prisma/enums";
+import { TaskPriority, TaskStatus } from "@/app/generated/prisma/enums";
 
 async function getUserId(): Promise<string> {
   const session = await auth();
@@ -15,11 +15,12 @@ export async function createTask(formData: FormData) {
   const userId = await getUserId();
   const title = (formData.get("title") as string).trim();
   const description = (formData.get("description") as string | null)?.trim() || null;
+  const priority = (formData.get("priority") as TaskPriority) || "medium";
 
   if (!title) return;
 
   await prisma.task.create({
-    data: { title, description, userId },
+    data: { title, description, priority, userId },
   });
 
   revalidatePath("/");

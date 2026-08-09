@@ -13,6 +13,12 @@ enum TaskStatus {
   done
 }
 
+enum TaskPriority {
+  low
+  medium
+  high
+}
+
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
@@ -29,8 +35,9 @@ model Task {
   id          Int        @id @default(autoincrement())
   title       String
   description String?
-  status      TaskStatus @default(todo)
-  createdAt   DateTime   @default(now())
+  status      TaskStatus   @default(todo)
+  priority    TaskPriority @default(medium)
+  createdAt   DateTime     @default(now())
   userId      String?
   user        User?      @relation(fields: [userId], references: [id])
 }

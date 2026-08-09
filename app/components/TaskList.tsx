@@ -1,11 +1,14 @@
 import TaskCard from "@/app/components/TaskCard";
-import { TaskStatus } from "@/app/generated/prisma/enums";
+import { TaskPriority, TaskStatus } from "@/app/generated/prisma/enums";
+
+const priorityOrder: Record<TaskPriority, number> = { high: 0, medium: 1, low: 2 };
 
 type Task = {
   id: number;
   title: string;
   description: string | null;
   status: TaskStatus;
+  priority: TaskPriority;
   createdAt: Date;
 };
 
@@ -40,9 +43,10 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
     );
   }
 
-  const inProgress = tasks.filter((taskItem) => taskItem.status === "in_progress");
-  const todo = tasks.filter((taskItem) => taskItem.status === "todo");
-  const done = tasks.filter((taskItem) => taskItem.status === "done");
+  const byPriority = (a: Task, b: Task) => priorityOrder[a.priority] - priorityOrder[b.priority];
+  const inProgress = tasks.filter((taskItem) => taskItem.status === "in_progress").sort(byPriority);
+  const todo = tasks.filter((taskItem) => taskItem.status === "todo").sort(byPriority);
+  const done = tasks.filter((taskItem) => taskItem.status === "done").sort(byPriority);
 
   return (
     <div className="space-y-6">
@@ -57,6 +61,7 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
                 title={taskItem.title}
                 description={taskItem.description}
                 status={taskItem.status}
+                priority={taskItem.priority}
                 createdAt={taskItem.createdAt}
               />
             ))}
@@ -75,6 +80,7 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
                 title={taskItem.title}
                 description={taskItem.description}
                 status={taskItem.status}
+                priority={taskItem.priority}
                 createdAt={taskItem.createdAt}
               />
             ))}
@@ -93,6 +99,7 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
                 title={taskItem.title}
                 description={taskItem.description}
                 status={taskItem.status}
+                priority={taskItem.priority}
                 createdAt={taskItem.createdAt}
               />
             ))}
