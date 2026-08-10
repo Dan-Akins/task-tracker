@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -47,6 +48,12 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <p className="text-sm text-gray-500 hidden sm:block dark:text-gray-400">{session.user.email}</p>
+            <Link
+              href="/dashboard"
+              className="bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-md text-xs sm:text-sm sm:px-4 hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"
+            >
+              Dashboard
+            </Link>
             <ThemeToggle />
             <form action={handleSignOut}>
               <button
