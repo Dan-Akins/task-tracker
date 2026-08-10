@@ -48,12 +48,6 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <p className="text-sm text-gray-500 hidden sm:block dark:text-gray-400">{session.user.email}</p>
-            <Link
-              href="/dashboard"
-              className="bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-md text-xs sm:text-sm sm:px-4 hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"
-            >
-              Dashboard
-            </Link>
             <ThemeToggle />
             <form action={handleSignOut}>
               <button
@@ -65,6 +59,16 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
             </form>
           </div>
         </header>
+
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors dark:text-gray-400 dark:hover:text-gray-200"
+        >
+          Dashboard
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </Link>
 
         <NewTaskForm />
 
