@@ -14,6 +14,10 @@ describe("stripHtml", () => {
     expect(stripHtml("hi <script alert(1)")).toBe("hi ");
   });
 
+  it("neutralizes a reported script-injection payload", () => {
+    expect(stripHtml("<script>alert('hacked')</script>")).toBe("alert('hacked')");
+  });
+
   it("leaves plain text untouched", () => {
     expect(stripHtml("Buy milk & eggs")).toBe("Buy milk & eggs");
   });

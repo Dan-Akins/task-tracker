@@ -78,6 +78,17 @@ describe("app/actions", () => {
       });
     });
 
+    it("neutralizes a reported script-injection title, storing it as inert text", async () => {
+      vi.mocked(auth).mockResolvedValue({ user: { id: "u1" } } as never);
+      vi.mocked(prisma.task.create).mockResolvedValue({} as never);
+
+      await createTask(formData({ title: "<script>alert('hacked')</script>" }));
+
+      expect(prisma.task.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({ title: "alert('hacked')" }),
+      });
+    });
+
     it("creates a task with trimmed fields and defaults, then revalidates", async () => {
       vi.mocked(auth).mockResolvedValue({ user: { id: "u1" } } as never);
       vi.mocked(prisma.task.create).mockResolvedValue({} as never);
