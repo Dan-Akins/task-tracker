@@ -31,18 +31,58 @@ describe("app/actions", () => {
       expect(prisma.task.create).not.toHaveBeenCalled();
     });
 
-    it("silently no-ops when the title is blank", async () => {
+    it("returns an error and no-ops when the title is blank", async () => {
       vi.mocked(auth).mockResolvedValue({ user: { id: "u1" } } as never);
-      await createTask(formData({ title: "   " }));
+      const result = await createTask(formData({ title: "   " }));
+      expect(result).toEqual({ error: "Title is required." });
       expect(prisma.task.create).not.toHaveBeenCalled();
       expect(revalidatePath).not.toHaveBeenCalled();
+    });
+
+    it("returns an error when the title exceeds the max length", async () => {
+      vi.mocked(auth).mockResolvedValue({ user: { id: "u1" } } as never);
+      const result = await createTask(formData({ title: "a".repeat(201) }));
+      expect(result).toEqual({ error: "Title must be 200 characters or fewer." });
+      expect(prisma.task.create).not.toHaveBeenCalled();
+    });
+
+    it("returns an error when the description exceeds the max length", async () => {
+      vi.mocked(auth).mockResolvedValue({ user: { id: "u1" } } as never);
+      const result = await createTask(
+        formData({ title: "Buy milk", description: "a".repeat(2001) }),
+      );
+      expect(result).toEqual({ error: "Description must be 2000 characters or fewer." });
+      expect(prisma.task.create).not.toHaveBeenCalled();
+    });
+
+    it("strips HTML tags from title and description before saving", async () => {
+      vi.mocked(auth).mockResolvedValue({ user: { id: "u1" } } as never);
+      vi.mocked(prisma.task.create).mockResolvedValue({} as never);
+
+      await createTask(
+        formData({
+          title: "<script>alert(1)</script>Buy milk",
+          description: "<b>2%</b> milk",
+        }),
+      );
+
+      expect(prisma.task.create).toHaveBeenCalledWith({
+        data: {
+          title: "alert(1)Buy milk",
+          description: "2% milk",
+          priority: "medium",
+          dueDate: null,
+          category: null,
+          userId: "u1",
+        },
+      });
     });
 
     it("creates a task with trimmed fields and defaults, then revalidates", async () => {
       vi.mocked(auth).mockResolvedValue({ user: { id: "u1" } } as never);
       vi.mocked(prisma.task.create).mockResolvedValue({} as never);
 
-      await createTask(
+      const result = await createTask(
         formData({
           title: "  Buy milk  ",
           description: "  2%  ",
@@ -50,6 +90,7 @@ describe("app/actions", () => {
         }),
       );
 
+      expect(result).toBeUndefined();
       expect(prisma.task.create).toHaveBeenCalledWith({
         data: {
           title: "Buy milk",
@@ -81,6 +122,20 @@ describe("app/actions", () => {
           userId: "u1",
         },
       });
+    });
+
+    it("returns an error for an invalid priority", async () => {
+      vi.mocked(auth).mockResolvedValue({ user: { id: "u1" } } as never);
+      const result = await createTask(formData({ title: "Ship it", priority: "urgent" }));
+      expect(result).toEqual({ error: "Invalid priority." });
+      expect(prisma.task.create).not.toHaveBeenCalled();
+    });
+
+    it("returns an error for an invalid due date", async () => {
+      vi.mocked(auth).mockResolvedValue({ user: { id: "u1" } } as never);
+      const result = await createTask(formData({ title: "Ship it", dueDate: "not-a-date" }));
+      expect(result).toEqual({ error: "Invalid due date." });
+      expect(prisma.task.create).not.toHaveBeenCalled();
     });
   });
 

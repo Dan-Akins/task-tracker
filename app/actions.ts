@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { TaskPriority, TaskStatus } from "@/app/generated/prisma/enums";
+import { TaskStatus } from "@/app/generated/prisma/enums";
+import { validateTaskInput } from "@/lib/validation";
 
 async function getUserId(): Promise<string> {
   const session = await auth();
@@ -11,19 +12,21 @@ async function getUserId(): Promise<string> {
   return session.user.id;
 }
 
-export async function createTask(formData: FormData) {
+export async function createTask(formData: FormData): Promise<{ error: string } | undefined> {
   const userId = await getUserId();
-  const title = (formData.get("title") as string).trim();
-  const description = (formData.get("description") as string | null)?.trim() || null;
-  const priority = (formData.get("priority") as TaskPriority) || "medium";
-  const dueDateStr = (formData.get("dueDate") as string | null)?.trim();
-  const dueDate = dueDateStr ? new Date(dueDateStr) : null;
-  const category = (formData.get("category") as string | null)?.trim() || null;
 
-  if (!title) return;
+  const result = validateTaskInput({
+    title: (formData.get("title") as string | null) ?? "",
+    description: formData.get("description") as string | null,
+    priority: (formData.get("priority") as string | null) || "medium",
+    dueDateStr: (formData.get("dueDate") as string | null)?.trim() || null,
+    category: formData.get("category") as string | null,
+  });
+
+  if ("error" in result) return result;
 
   await prisma.task.create({
-    data: { title, description, priority, dueDate, category, userId },
+    data: { ...result.data, userId },
   });
 
   revalidatePath("/");

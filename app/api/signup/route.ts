@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { validateEmail } from "@/lib/validation";
 
 function validatePassword(password: string): string | null {
   if (password.length < 8) return "Password must be at least 8 characters.";
@@ -12,10 +13,18 @@ function validatePassword(password: string): string | null {
 }
 
 export async function POST(req: NextRequest) {
-  const { email, password } = await req.json();
+  const body = await req.json().catch(() => null);
+  const email = body?.email;
+  const password = body?.password;
 
-  if (!email || !password) {
+  if (typeof email !== "string" || typeof password !== "string" || !email || !password) {
     return NextResponse.json({ error: "Email and password are required." }, { status: 400 });
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+  const emailError = validateEmail(normalizedEmail);
+  if (emailError) {
+    return NextResponse.json({ error: emailError }, { status: 400 });
   }
 
   const passwordError = validatePassword(password);
@@ -23,7 +32,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: passwordError }, { status: 400 });
   }
 
-  const normalizedEmail = (email as string).toLowerCase().trim();
   const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
   if (existing) {
     return NextResponse.json({ error: "An account with that email already exists." }, { status: 400 });

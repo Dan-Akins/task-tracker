@@ -1,15 +1,26 @@
 "use client";
 
-import { useRef, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { createTask } from "@/app/actions";
+import {
+  TASK_CATEGORY_MAX_LENGTH,
+  TASK_DESCRIPTION_MAX_LENGTH,
+  TASK_TITLE_MAX_LENGTH,
+} from "@/lib/validation";
 
 export default function NewTaskForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, startTransition] = useTransition();
+  const [error, setError] = useState("");
 
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
-      await createTask(formData);
+      const result = await createTask(formData);
+      if (result?.error) {
+        setError(result.error);
+        return;
+      }
+      setError("");
       formRef.current?.reset();
     });
   }
@@ -22,6 +33,12 @@ export default function NewTaskForm() {
     >
       <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-50">New Task</h2>
 
+      {error && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+          {error}
+        </p>
+      )}
+
       <div className="flex flex-col gap-1">
         <label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-400">
           Title <span className="text-red-500">*</span>
@@ -31,6 +48,7 @@ export default function NewTaskForm() {
           name="title"
           type="text"
           required
+          maxLength={TASK_TITLE_MAX_LENGTH}
           placeholder="What needs to be done?"
           className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-700 dark:border-gray-700 dark:text-gray-50 dark:placeholder:text-gray-400"
         />
@@ -44,6 +62,7 @@ export default function NewTaskForm() {
           id="description"
           name="description"
           rows={3}
+          maxLength={TASK_DESCRIPTION_MAX_LENGTH}
           placeholder="Optional details…"
           className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none dark:bg-gray-700 dark:border-gray-700 dark:text-gray-50 dark:placeholder:text-gray-400"
         />
@@ -69,6 +88,7 @@ export default function NewTaskForm() {
             id="category"
             name="category"
             type="text"
+            maxLength={TASK_CATEGORY_MAX_LENGTH}
             placeholder="e.g. Work, Personal…"
             className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-700 dark:border-gray-700 dark:text-gray-50 dark:placeholder:text-gray-400"
           />
