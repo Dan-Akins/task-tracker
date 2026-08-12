@@ -1,26 +1,38 @@
 type Attempt = { count: number; resetAt: number };
 
-const store = new Map<string, Attempt>();
-const MAX_ATTEMPTS = 5;
-const WINDOW_MS = 15 * 60 * 1000;
+function createLimiter(maxAttempts: number, windowMs: number) {
+  const store = new Map<string, Attempt>();
 
-export function isRateLimited(key: string): boolean {
-  const now = Date.now();
-  const rec = store.get(key);
-  if (!rec || now > rec.resetAt) return false;
-  return rec.count >= MAX_ATTEMPTS;
+  return {
+    isRateLimited(key: string): boolean {
+      const now = Date.now();
+      const rec = store.get(key);
+      if (!rec || now > rec.resetAt) return false;
+      return rec.count >= maxAttempts;
+    },
+    recordFailure(key: string): void {
+      const now = Date.now();
+      const rec = store.get(key);
+      if (!rec || now > rec.resetAt) {
+        store.set(key, { count: 1, resetAt: now + windowMs });
+      } else {
+        rec.count++;
+      }
+    },
+    resetAttempts(key: string): void {
+      store.delete(key);
+    },
+  };
 }
 
-export function recordFailure(key: string): void {
-  const now = Date.now();
-  const rec = store.get(key);
-  if (!rec || now > rec.resetAt) {
-    store.set(key, { count: 1, resetAt: now + WINDOW_MS });
-  } else {
-    rec.count++;
-  }
-}
+const emailLimiter = createLimiter(5, 15 * 60 * 1000);
 
-export function resetAttempts(key: string): void {
-  store.delete(key);
-}
+export const isRateLimited = emailLimiter.isRateLimited;
+export const recordFailure = emailLimiter.recordFailure;
+export const resetAttempts = emailLimiter.resetAttempts;
+
+const ipLimiter = createLimiter(5, 60 * 1000);
+
+export const isIpRateLimited = ipLimiter.isRateLimited;
+export const recordIpFailure = ipLimiter.recordFailure;
+export const resetIpAttempts = ipLimiter.resetAttempts;
