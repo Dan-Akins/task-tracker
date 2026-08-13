@@ -38,6 +38,8 @@ const statusCycle: Record<TaskStatus, TaskStatus> = {
   done: "todo",
 };
 
+const VALID_STATUSES = new Set<string>(Object.values(TaskStatus));
+
 export async function deleteTask(id: number) {
   const userId = await getUserId();
 
@@ -50,6 +52,8 @@ export async function deleteTask(id: number) {
 
 export async function cycleStatus(id: number, current: TaskStatus) {
   const userId = await getUserId();
+
+  if (!VALID_STATUSES.has(current)) throw new Error("Invalid status.");
 
   await prisma.task.update({
     where: { id, userId },
