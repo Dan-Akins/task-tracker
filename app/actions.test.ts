@@ -26,7 +26,7 @@ describe("app/actions", () => {
 
   describe("createTask", () => {
     it("throws when there is no authenticated user", async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      vi.mocked(auth).mockResolvedValue(null as never);
       await expect(createTask(formData({ title: "Buy milk" }))).rejects.toThrow("Unauthorized");
       expect(prisma.task.create).not.toHaveBeenCalled();
     });
@@ -152,7 +152,7 @@ describe("app/actions", () => {
 
   describe("deleteTask", () => {
     it("throws when there is no authenticated user", async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      vi.mocked(auth).mockResolvedValue(null as never);
       await expect(deleteTask(1)).rejects.toThrow("Unauthorized");
       expect(prisma.task.delete).not.toHaveBeenCalled();
     });
@@ -170,7 +170,7 @@ describe("app/actions", () => {
 
   describe("cycleStatus", () => {
     it("throws when there is no authenticated user", async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      vi.mocked(auth).mockResolvedValue(null as never);
       await expect(cycleStatus(1, "todo")).rejects.toThrow("Unauthorized");
       expect(prisma.task.update).not.toHaveBeenCalled();
     });

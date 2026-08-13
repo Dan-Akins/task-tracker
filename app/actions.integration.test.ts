@@ -19,7 +19,7 @@ import { teardownTestDb } from "../test/pglite-test-db";
 
 function mockSession(userId: string | null) {
   if (userId === null) {
-    vi.mocked(auth).mockResolvedValue(null);
+    vi.mocked(auth).mockResolvedValue(null as never);
   } else {
     vi.mocked(auth).mockResolvedValue({ user: { id: userId } } as never);
   }
