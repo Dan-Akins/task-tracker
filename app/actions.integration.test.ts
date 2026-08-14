@@ -95,6 +95,30 @@ describe("app/actions (integration, real database)", () => {
       await expect(createTask(formData({ title: "Buy milk" }))).rejects.toThrow("Unauthorized");
       expect(await prisma.task.count()).toBe(0);
     });
+
+    it("rejects a title over 200 characters and persists nothing", async () => {
+      const user = await createUser();
+      mockSession(user.id);
+
+      const result = await createTask(formData({ title: "a".repeat(201) }));
+
+      expect(result).toEqual({ error: "Title must be 200 characters or fewer." });
+      expect(await prisma.task.count()).toBe(0);
+    });
+
+    it("strips HTML out of the title before persisting it", async () => {
+      const user = await createUser();
+      mockSession(user.id);
+
+      const result = await createTask(
+        formData({ title: "<img src=x onerror=alert(1)>Buy milk" }),
+      );
+
+      expect(result).toBeUndefined();
+      const tasks = await prisma.task.findMany({ where: { userId: user.id } });
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].title).toBe("Buy milk");
+    });
   });
 
   describe("reading the task list", () => {
@@ -166,6 +190,15 @@ describe("app/actions (integration, real database)", () => {
 
       const unchanged = await prisma.task.findUniqueOrThrow({ where: { id: task.id } });
       expect(unchanged.status).toBe("todo");
+    });
+
+    it("rejects a nonexistent task id with a not-found error", async () => {
+      const user = await createUser();
+      mockSession(user.id);
+
+      const attempt = cycleStatus(999999, "todo");
+      await expect(attempt).rejects.toBeInstanceOf(Prisma.PrismaClientKnownRequestError);
+      await expect(attempt).rejects.toMatchObject({ code: "P2025" });
     });
 
     it("rejects a status value outside the enum and leaves the task unchanged", async () => {
