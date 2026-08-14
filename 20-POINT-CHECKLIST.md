@@ -23,7 +23,7 @@ Audited against the codebase as of this review. 2 FAILs found and fixed; results
 | 17 | No hardcoded secrets in source code | **PASS** | Grepped `.ts`/`.tsx` files for common secret patterns (API keys, hardcoded credentials) — no matches. All secrets are loaded from environment variables. |
 | 18 | npm audit shows zero high/critical vulnerabilities | **FIXED → PASS** | `npm audit` reported 1 **high** severity vulnerability (`nanoid` — indefinite-loop generator bug, GHSA-2v37-7h3g-55p8). Ran `npm audit fix`; `npm audit` now reports **0 vulnerabilities**. |
 | 19 | HTTPS is enforced (Vercel handles this automatically) | **PASS** | No code in the app undermines this (no hardcoded `http://` API calls, no insecure-cookie overrides). HTTPS/HSTS enforcement is delegated to Vercel per the checklist's own note. |
-| 20 | CORS is configured to allow only your domain (prevents cross-origin attacks) | **PASS** | `proxy.ts`'s `applyApiCors()` only allows `ALLOWED_ORIGINS = ["https://task-tracker.vercel.app", "http://localhost:3000", "http://127.0.0.1:3000"]` for `/api/*` routes; any other `Origin` gets a `403`. |
+| 20 | CORS is configured to allow only your domain (prevents cross-origin attacks) | **FIXED → PASS** | `proxy.ts`'s `applyApiCors()` allowlist previously cited `https://task-tracker.vercel.app`, a domain never actually assigned to this project (confirmed via `vercel alias ls` — the real production aliases are `task-tracker-team-camdan.vercel.app`, `task-tracker-kappa-five-39.vercel.app`, and `task-tracker-git-master-team-camdan.vercel.app`). The wrong domain didn't grant excess access to anyone — it just meant the allowlist matched no real origin — but it was silently non-functional. `ALLOWED_ORIGINS` now lists the actual production aliases; any other `Origin` still gets a `403`. |
 
 ## Summary
 
@@ -31,5 +31,6 @@ Audited against the codebase as of this review. 2 FAILs found and fixed; results
 - Fixes applied:
   1. **Unbounded email/password length** (#8) — added `EMAIL_MAX_LENGTH`/`PASSWORD_MAX_LENGTH` caps in `lib/validation.ts`, enforced at signup and login.
   2. **`nanoid` high-severity vulnerability** (#18) — resolved via `npm audit fix`; 0 vulnerabilities remain.
+  3. **(Post-review, 2026-08-14) Wrong CORS domain** (#20) — `ALLOWED_ORIGINS` cited a domain (`task-tracker.vercel.app`) never actually assigned to this project; discovered while testing the backup cron job. Updated to the real production aliases confirmed via `vercel alias ls`. This didn't grant excess access — it just meant the allowlist matched no real origin — but was silently non-functional.
 - Regression tests added: `lib/validation.test.ts` (email length boundary), `app/api/signup/route.test.ts` (new file — password/email length rejection).
-- Full test suite: 108/108 passing after all fixes.
+- Full test suite: 108/108 passing after all fixes (144/144 as of the latest commit, including later feature work).

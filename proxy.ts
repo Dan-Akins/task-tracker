@@ -3,7 +3,11 @@ import { NextResponse, type NextFetchEvent, type NextProxy, type NextRequest } f
 import { authConfig } from "./auth.config";
 
 const ALLOWED_ORIGINS = [
-  "https://task-tracker.vercel.app",
+  // Confirmed via `vercel alias ls` — task-tracker.vercel.app was never
+  // actually assigned to this project; these are the real production aliases.
+  "https://task-tracker-team-camdan.vercel.app",
+  "https://task-tracker-kappa-five-39.vercel.app",
+  "https://task-tracker-git-master-team-camdan.vercel.app",
   "http://localhost:3000",
   "http://127.0.0.1:3000",
 ];
