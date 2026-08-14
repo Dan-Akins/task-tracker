@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { PASSWORD_MAX_LENGTH, validateEmail } from "@/lib/validation";
+import { consumeWriteQuota, getClientIp } from "@/lib/rateLimit";
 
 function validatePassword(password: string): string | null {
   if (password.length < 8) return "Password must be at least 8 characters.";
@@ -16,6 +17,14 @@ function validatePassword(password: string): string | null {
 }
 
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req);
+  if (!consumeWriteQuota(`signup:${ip}`)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again in a minute." },
+      { status: 429 },
+    );
+  }
+
   const body = await req.json().catch(() => null);
   const email = body?.email;
   const password = body?.password;

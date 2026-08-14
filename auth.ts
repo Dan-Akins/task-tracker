@@ -10,14 +10,9 @@ import {
   isIpRateLimited,
   recordIpFailure,
   resetIpAttempts,
+  getClientIp,
 } from "@/lib/rateLimit";
 import { EMAIL_MAX_LENGTH, PASSWORD_MAX_LENGTH } from "@/lib/validation";
-
-function getClientIp(request: Request): string {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  if (forwardedFor) return forwardedFor.split(",")[0].trim();
-  return request.headers.get("x-real-ip") ?? "unknown";
-}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,

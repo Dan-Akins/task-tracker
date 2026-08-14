@@ -192,4 +192,39 @@ describe("app/actions", () => {
       expect(revalidatePath).toHaveBeenCalledWith("/");
     });
   });
+
+  describe("write rate limiting (30/minute per user)", () => {
+    const RATE_LIMITED_USER = "rate-limit-test-user";
+
+    it("blocks createTask past the 30th write in a minute, and returns an error instead of throwing", async () => {
+      vi.mocked(auth).mockResolvedValue({ user: { id: RATE_LIMITED_USER } } as never);
+      vi.mocked(prisma.task.create).mockResolvedValue({} as never);
+
+      for (let i = 0; i < 30; i++) {
+        const result = await createTask(formData({ title: `Task ${i}` }));
+        expect(result).toBeUndefined();
+      }
+
+      const blocked = await createTask(formData({ title: "One too many" }));
+      expect(blocked).toEqual({
+        error: "Too many requests. Please slow down and try again in a minute.",
+      });
+      expect(prisma.task.create).toHaveBeenCalledTimes(30);
+    });
+
+    it("shares the same per-user quota across createTask, deleteTask, and cycleStatus", async () => {
+      const user = "rate-limit-shared-user";
+      vi.mocked(auth).mockResolvedValue({ user: { id: user } } as never);
+      vi.mocked(prisma.task.create).mockResolvedValue({} as never);
+      vi.mocked(prisma.task.delete).mockResolvedValue({} as never);
+      vi.mocked(prisma.task.update).mockResolvedValue({} as never);
+
+      for (let i = 0; i < 10; i++) await createTask(formData({ title: `Task ${i}` }));
+      for (let i = 0; i < 10; i++) await deleteTask(i);
+      for (let i = 0; i < 10; i++) await cycleStatus(i, "todo");
+
+      await expect(deleteTask(999)).rejects.toThrow("Too many requests");
+      await expect(cycleStatus(999, "todo")).rejects.toThrow("Too many requests");
+    });
+  });
 });

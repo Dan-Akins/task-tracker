@@ -5,6 +5,9 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { TaskStatus } from "@/app/generated/prisma/enums";
 import { validateTaskInput } from "@/lib/validation";
+import { consumeWriteQuota } from "@/lib/rateLimit";
+
+const RATE_LIMIT_MESSAGE = "Too many requests. Please slow down and try again in a minute.";
 
 async function getUserId(): Promise<string> {
   const session = await auth();
@@ -12,8 +15,17 @@ async function getUserId(): Promise<string> {
   return session.user.id;
 }
 
+function quotaKey(userId: string): string {
+  return `user:${userId}`;
+}
+
+function checkWriteQuota(userId: string): void {
+  if (!consumeWriteQuota(quotaKey(userId))) throw new Error(RATE_LIMIT_MESSAGE);
+}
+
 export async function createTask(formData: FormData): Promise<{ error: string } | undefined> {
   const userId = await getUserId();
+  if (!consumeWriteQuota(quotaKey(userId))) return { error: RATE_LIMIT_MESSAGE };
 
   const result = validateTaskInput({
     title: (formData.get("title") as string | null) ?? "",
@@ -42,6 +54,7 @@ const VALID_STATUSES = new Set<string>(Object.values(TaskStatus));
 
 export async function deleteTask(id: number) {
   const userId = await getUserId();
+  checkWriteQuota(userId);
 
   await prisma.task.delete({
     where: { id, userId },
@@ -52,6 +65,7 @@ export async function deleteTask(id: number) {
 
 export async function cycleStatus(id: number, current: TaskStatus) {
   const userId = await getUserId();
+  checkWriteQuota(userId);
 
   if (!VALID_STATUSES.has(current)) throw new Error("Invalid status.");
 
