@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { validateEmail } from "@/lib/validation";
+import { PASSWORD_MAX_LENGTH, validateEmail } from "@/lib/validation";
 
 function validatePassword(password: string): string | null {
   if (password.length < 8) return "Password must be at least 8 characters.";
+  if (password.length > PASSWORD_MAX_LENGTH) {
+    return `Password must be ${PASSWORD_MAX_LENGTH} characters or fewer.`;
+  }
   if (!/[A-Z]/.test(password)) return "Password must contain at least one uppercase letter.";
   if (!/[a-z]/.test(password)) return "Password must contain at least one lowercase letter.";
   if (!/[0-9]/.test(password)) return "Password must contain at least one number.";

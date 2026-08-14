@@ -3,6 +3,10 @@ import { TaskPriority } from "@/app/generated/prisma/enums";
 export const TASK_TITLE_MAX_LENGTH = 200;
 export const TASK_DESCRIPTION_MAX_LENGTH = 2000;
 export const TASK_CATEGORY_MAX_LENGTH = 100;
+// RFC 5321's mailbox length limit.
+export const EMAIL_MAX_LENGTH = 254;
+// Above bcrypt's 72-byte effective limit; bounds hashing cost on oversized input.
+export const PASSWORD_MAX_LENGTH = 128;
 
 const VALID_PRIORITIES = new Set<string>(Object.values(TaskPriority));
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -13,6 +17,7 @@ export function stripHtml(value: string): string {
 }
 
 export function validateEmail(email: string): string | null {
+  if (email.length > EMAIL_MAX_LENGTH) return "Enter a valid email address.";
   if (!EMAIL_PATTERN.test(email)) return "Enter a valid email address.";
   return null;
 }

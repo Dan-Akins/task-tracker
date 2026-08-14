@@ -11,6 +11,7 @@ import {
   recordIpFailure,
   resetIpAttempts,
 } from "@/lib/rateLimit";
+import { EMAIL_MAX_LENGTH, PASSWORD_MAX_LENGTH } from "@/lib/validation";
 
 function getClientIp(request: Request): string {
   const forwardedFor = request.headers.get("x-forwarded-for");
@@ -29,7 +30,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       async authorize(credentials, request) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const email = (credentials.email as string).toLowerCase().trim();
+        const rawEmail = credentials.email as string;
+        const rawPassword = credentials.password as string;
+        if (rawEmail.length > EMAIL_MAX_LENGTH || rawPassword.length > PASSWORD_MAX_LENGTH) {
+          return null;
+        }
+
+        const email = rawEmail.toLowerCase().trim();
         const ip = getClientIp(request);
         if (isRateLimited(email) || isIpRateLimited(ip)) return null;
 
@@ -40,7 +47,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        const valid = await bcrypt.compare(credentials.password as string, user.password);
+        const valid = await bcrypt.compare(rawPassword, user.password);
         if (!valid) {
           recordFailure(email);
           recordIpFailure(ip);

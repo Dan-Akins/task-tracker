@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { stripHtml, validateEmail, validateTaskInput } from "./validation";
+import { EMAIL_MAX_LENGTH, stripHtml, validateEmail, validateTaskInput } from "./validation";
 
 describe("stripHtml", () => {
   it("removes simple tags", () => {
@@ -34,6 +34,16 @@ describe("validateEmail", () => {
       expect(validateEmail(value)).toBe("Enter a valid email address.");
     },
   );
+
+  it("accepts an email at exactly the max length", () => {
+    const local = "a".repeat(EMAIL_MAX_LENGTH - "@example.com".length);
+    expect(validateEmail(`${local}@example.com`)).toBeNull();
+  });
+
+  it("rejects an email over the max length, even if otherwise well-formed", () => {
+    const local = "a".repeat(EMAIL_MAX_LENGTH - "@example.com".length + 1);
+    expect(validateEmail(`${local}@example.com`)).toBe("Enter a valid email address.");
+  });
 });
 
 describe("validateTaskInput", () => {
