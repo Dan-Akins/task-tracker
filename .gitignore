@@ -31,6 +31,9 @@
 *.db-shm
 *.db-wal
 
+# local database backups (contain password hashes — never commit)
+/backups
+
 # debug
 *.log
 npm-debug.log*
