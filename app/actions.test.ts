@@ -1,17 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/auth", () => ({ auth: vi.fn() }));
+vi.mock("@/auth", () => ({ auth: vi.fn(), signOut: vi.fn() }));
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    task: { create: vi.fn(), delete: vi.fn(), update: vi.fn() },
+    task: { create: vi.fn(), delete: vi.fn(), update: vi.fn(), deleteMany: vi.fn() },
+    user: { delete: vi.fn() },
   },
 }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 
-import { auth } from "@/auth";
+import { auth, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { createTask, deleteTask, cycleStatus } from "./actions";
+import { createTask, deleteTask, cycleStatus, deleteAccount } from "./actions";
 
 function formData(fields: Record<string, string>) {
   const fd = new FormData();
@@ -190,6 +191,31 @@ describe("app/actions", () => {
         data: { status: expected },
       });
       expect(revalidatePath).toHaveBeenCalledWith("/");
+    });
+  });
+
+  describe("deleteAccount", () => {
+    it("throws when there is no authenticated user, and deletes nothing", async () => {
+      vi.mocked(auth).mockResolvedValue(null as never);
+      await expect(deleteAccount()).rejects.toThrow("Unauthorized");
+      expect(prisma.task.deleteMany).not.toHaveBeenCalled();
+      expect(prisma.user.delete).not.toHaveBeenCalled();
+      expect(signOut).not.toHaveBeenCalled();
+    });
+
+    it("deletes the user's tasks before deleting the user, then signs out", async () => {
+      vi.mocked(auth).mockResolvedValue({ user: { id: "u1" } } as never);
+      vi.mocked(prisma.task.deleteMany).mockResolvedValue({ count: 0 } as never);
+      vi.mocked(prisma.user.delete).mockResolvedValue({} as never);
+
+      await deleteAccount();
+
+      expect(prisma.task.deleteMany).toHaveBeenCalledWith({ where: { userId: "u1" } });
+      expect(prisma.user.delete).toHaveBeenCalledWith({ where: { id: "u1" } });
+      const taskDeleteOrder = vi.mocked(prisma.task.deleteMany).mock.invocationCallOrder[0];
+      const userDeleteOrder = vi.mocked(prisma.user.delete).mock.invocationCallOrder[0];
+      expect(taskDeleteOrder).toBeLessThan(userDeleteOrder);
+      expect(signOut).toHaveBeenCalledWith({ redirectTo: "/login" });
     });
   });
 

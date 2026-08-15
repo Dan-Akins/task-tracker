@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { auth } from "@/auth";
+import { auth, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { TaskStatus } from "@/app/generated/prisma/enums";
 import { validateTaskInput } from "@/lib/validation";
@@ -75,4 +75,20 @@ export async function cycleStatus(id: number, current: TaskStatus) {
   });
 
   revalidatePath("/");
+}
+
+export async function deleteAccount() {
+  const userId = await getUserId();
+  checkWriteQuota(userId);
+
+  // Task -> User has no onDelete: Cascade in the schema (unlike Session),
+  // so tasks must be deleted before the user row or this violates the FK
+  // constraint.
+  await prisma.task.deleteMany({ where: { userId } });
+  await prisma.user.delete({ where: { id: userId } });
+
+  // Sessions here are JWT-based, not database-backed, so deleting the user
+  // row alone doesn't invalidate an already-issued session cookie — sign
+  // out explicitly or the browser is left "logged in" as a deleted user.
+  await signOut({ redirectTo: "/login" });
 }

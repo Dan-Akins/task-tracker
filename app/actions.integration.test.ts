@@ -3,7 +3,7 @@ import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
 // Real CRUD path: no mocked Prisma client here. `@/lib/prisma` is swapped for
 // a PrismaClient backed by an in-memory PGlite (WASM Postgres) instance with
 // the project's actual migrations applied — see test/pglite-test-db.ts.
-vi.mock("@/auth", () => ({ auth: vi.fn() }));
+vi.mock("@/auth", () => ({ auth: vi.fn(), signOut: vi.fn() }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/prisma", async () => {
   const { getTestDb } = await import("../test/pglite-test-db");
@@ -11,10 +11,10 @@ vi.mock("@/lib/prisma", async () => {
   return { prisma };
 });
 
-import { auth } from "@/auth";
+import { auth, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/app/generated/prisma/client";
-import { createTask, deleteTask, cycleStatus } from "./actions";
+import { createTask, deleteTask, cycleStatus, deleteAccount } from "./actions";
 import { teardownTestDb } from "../test/pglite-test-db";
 
 function mockSession(userId: string | null) {
@@ -255,6 +255,41 @@ describe("app/actions (integration, real database)", () => {
       mockSession(user.id);
 
       await expect(deleteTask(999999)).rejects.toMatchObject({ code: "P2025" });
+    });
+  });
+
+  describe("deleteAccount", () => {
+    it("deletes the user and every one of their tasks, then signs out", async () => {
+      const user = await createUser();
+      await prisma.task.create({ data: { title: "First", userId: user.id } });
+      await prisma.task.create({ data: { title: "Second", userId: user.id } });
+      mockSession(user.id);
+
+      await deleteAccount();
+
+      expect(await prisma.user.findUnique({ where: { id: user.id } })).toBeNull();
+      expect(await prisma.task.findMany({ where: { userId: user.id } })).toEqual([]);
+      expect(signOut).toHaveBeenCalledWith({ redirectTo: "/login" });
+    });
+
+    it("does not delete another user's tasks", async () => {
+      const target = await createUser();
+      const other = await createUser();
+      const otherTask = await prisma.task.create({ data: { title: "Not mine", userId: other.id } });
+      mockSession(target.id);
+
+      await deleteAccount();
+
+      expect(await prisma.task.findUnique({ where: { id: otherTask.id } })).not.toBeNull();
+      expect(await prisma.user.findUnique({ where: { id: other.id } })).not.toBeNull();
+    });
+
+    it("throws and deletes nothing when there is no authenticated user", async () => {
+      const user = await createUser();
+      mockSession(null);
+
+      await expect(deleteAccount()).rejects.toThrow("Unauthorized");
+      expect(await prisma.user.findUnique({ where: { id: user.id } })).not.toBeNull();
     });
   });
 });
