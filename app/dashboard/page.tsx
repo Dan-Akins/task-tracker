@@ -3,7 +3,7 @@ import { signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
 import { STATUS_META, STATUS_ORDER } from "@/lib/taskMeta";
-import ThemeToggle from "@/app/components/ThemeToggle";
+import ThemeToggle from "@/app/components/ui/ThemeToggle";
 import { TaskStatus } from "@/app/generated/prisma/enums";
 
 export const dynamic = "force-dynamic";

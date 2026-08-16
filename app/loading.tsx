@@ -1,4 +1,4 @@
-import TaskCardSkeleton from "@/app/components/TaskCardSkeleton";
+import TaskCardSkeleton from "@/app/components/tasks/TaskCardSkeleton";
 
 export default function Loading() {
   return (

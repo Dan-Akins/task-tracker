@@ -3,10 +3,10 @@ import Link from "next/link";
 import { signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
-import NewTaskForm from "@/app/components/NewTaskForm";
-import TaskList from "@/app/components/TaskList";
-import ThemeToggle from "@/app/components/ThemeToggle";
-import StatusFilter from "@/app/components/StatusFilter";
+import NewTaskForm from "@/app/components/tasks/NewTaskForm";
+import TaskList from "@/app/components/tasks/TaskList";
+import ThemeToggle from "@/app/components/ui/ThemeToggle";
+import StatusFilter from "@/app/components/tasks/StatusFilter";
 
 export const dynamic = "force-dynamic";
 

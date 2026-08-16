@@ -1,17 +1,6 @@
-import TaskCard from "@/app/components/TaskCard";
-import { TaskPriority, TaskStatus } from "@/app/generated/prisma/enums";
+import TaskCard from "@/app/components/tasks/TaskCard";
 import { PRIORITY_META, STATUS_META } from "@/lib/taskMeta";
-
-type Task = {
-  id: number;
-  title: string;
-  description: string | null;
-  status: TaskStatus;
-  priority: TaskPriority;
-  dueDate: Date | null;
-  category: string | null;
-  createdAt: Date;
-};
+import type { Task } from "@/types/task";
 
 type Props = {
   tasks: Task[];

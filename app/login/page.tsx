@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import ThemeToggle from "@/app/components/ThemeToggle";
+import ThemeToggle from "@/app/components/ui/ThemeToggle";
 
 export default function LoginPage() {
   const router = useRouter();

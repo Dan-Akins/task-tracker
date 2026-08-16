@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireSession } from "@/lib/session";
-import DeleteAccountButton from "@/app/components/DeleteAccountButton";
+import DeleteAccountButton from "@/app/components/account/DeleteAccountButton";
 
 export const dynamic = "force-dynamic";
 

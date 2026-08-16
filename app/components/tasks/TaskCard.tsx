@@ -2,8 +2,9 @@
 
 import { useTransition } from "react";
 import { cycleStatus, deleteTask } from "@/app/actions";
-import { TaskPriority, TaskStatus } from "@/app/generated/prisma/enums";
+import { TaskStatus } from "@/app/generated/prisma/enums";
 import { STATUS_META as statusConfig, PRIORITY_META as priorityConfig } from "@/lib/taskMeta";
+import type { Task } from "@/types/task";
 
 const nextAction: Record<TaskStatus, { label: string; style: string }> = {
   todo: {
@@ -20,16 +21,7 @@ const nextAction: Record<TaskStatus, { label: string; style: string }> = {
   },
 };
 
-interface Props {
-  id: number;
-  title: string;
-  description: string | null;
-  status: TaskStatus;
-  priority: TaskPriority;
-  dueDate: Date | null;
-  category: string | null;
-  createdAt: Date;
-}
+type Props = Task;
 
 export default function TaskCard({ id, title, description, status, priority, dueDate, category, createdAt }: Props) {
   const [pending, startTransition] = useTransition();
