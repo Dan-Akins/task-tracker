@@ -1,13 +1,11 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { requireSession } from "@/lib/session";
 import DeleteAccountButton from "@/app/components/DeleteAccountButton";
 
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
+  const session = await requireSession();
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 dark:bg-gray-900">

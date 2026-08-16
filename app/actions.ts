@@ -1,19 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { auth, signOut } from "@/auth";
+import { signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { requireUserId as getUserId } from "@/lib/session";
 import { TaskStatus } from "@/app/generated/prisma/enums";
 import { validateTaskInput } from "@/lib/validation";
 import { consumeWriteQuota } from "@/lib/rateLimit";
 
 const RATE_LIMIT_MESSAGE = "Too many requests. Please slow down and try again in a minute.";
-
-async function getUserId(): Promise<string> {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
-  return session.user.id;
-}
 
 function quotaKey(userId: string): string {
   return `user:${userId}`;

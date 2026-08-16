@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth, signOut } from "@/auth";
+import { signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { requireSession } from "@/lib/session";
 import NewTaskForm from "@/app/components/NewTaskForm";
 import TaskList from "@/app/components/TaskList";
 import ThemeToggle from "@/app/components/ThemeToggle";
@@ -13,9 +13,7 @@ export const dynamic = "force-dynamic";
 type SearchParams = Promise<{ status?: string }>;
 
 export default async function Home({ searchParams }: { searchParams: SearchParams }) {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
-
+  const session = await requireSession();
   const userId = session.user.id;
   const { status: statusFilter } = await searchParams;
 

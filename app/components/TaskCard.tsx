@@ -3,30 +3,7 @@
 import { useTransition } from "react";
 import { cycleStatus, deleteTask } from "@/app/actions";
 import { TaskPriority, TaskStatus } from "@/app/generated/prisma/enums";
-
-const statusConfig: Record<
-  TaskStatus,
-  { label: string; badge: string; accent: string; dot: string }
-> = {
-  todo: {
-    label: "To Do",
-    badge: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-400",
-    accent: "bg-gray-400",
-    dot: "bg-gray-400",
-  },
-  in_progress: {
-    label: "In Progress",
-    badge: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
-    accent: "bg-blue-600",
-    dot: "bg-blue-600 dark:bg-blue-400",
-  },
-  done: {
-    label: "Done",
-    badge: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
-    accent: "bg-green-600",
-    dot: "bg-green-600 dark:bg-green-400",
-  },
-};
+import { STATUS_META as statusConfig, PRIORITY_META as priorityConfig } from "@/lib/taskMeta";
 
 const nextAction: Record<TaskStatus, { label: string; style: string }> = {
   todo: {
@@ -41,12 +18,6 @@ const nextAction: Record<TaskStatus, { label: string; style: string }> = {
     label: "Reset",
     style: "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-600",
   },
-};
-
-const priorityConfig: Record<TaskPriority, { label: string; className: string; dot: string }> = {
-  high: { label: "High", className: "text-red-600 dark:text-red-400", dot: "bg-red-600 dark:bg-red-400" },
-  medium: { label: "Medium", className: "text-amber-500 dark:text-amber-400", dot: "bg-amber-500 dark:bg-amber-400" },
-  low: { label: "Low", className: "text-gray-400 dark:text-gray-500", dot: "bg-gray-400 dark:bg-gray-500" },
 };
 
 interface Props {

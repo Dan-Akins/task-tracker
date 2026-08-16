@@ -1,7 +1,6 @@
 import TaskCard from "@/app/components/TaskCard";
 import { TaskPriority, TaskStatus } from "@/app/generated/prisma/enums";
-
-const priorityOrder: Record<TaskPriority, number> = { high: 0, medium: 1, low: 2 };
+import { PRIORITY_META, STATUS_META } from "@/lib/taskMeta";
 
 type Task = {
   id: number;
@@ -45,7 +44,7 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
     );
   }
 
-  const byPriority = (a: Task, b: Task) => priorityOrder[a.priority] - priorityOrder[b.priority];
+  const byPriority = (a: Task, b: Task) => PRIORITY_META[a.priority].order - PRIORITY_META[b.priority].order;
   const inProgress = tasks.filter((taskItem) => taskItem.status === "in_progress").sort(byPriority);
   const todo = tasks.filter((taskItem) => taskItem.status === "todo").sort(byPriority);
   const done = tasks.filter((taskItem) => taskItem.status === "done").sort(byPriority);
@@ -55,8 +54,8 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
       {inProgress.length > 0 && (
         <section>
           <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">
-            <span className="size-2 rounded-full bg-blue-600 dark:bg-blue-400" />
-            In Progress
+            <span className={`size-2 rounded-full ${STATUS_META.in_progress.dot}`} />
+            {STATUS_META.in_progress.label}
           </h2>
           <ul className="space-y-3">
             {inProgress.map((taskItem) => (
@@ -79,8 +78,8 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
       {todo.length > 0 && (
         <section>
           <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">
-            <span className="size-2 rounded-full bg-gray-400" />
-            To Do
+            <span className={`size-2 rounded-full ${STATUS_META.todo.dot}`} />
+            {STATUS_META.todo.label}
           </h2>
           <ul className="space-y-3">
             {todo.map((taskItem) => (
@@ -103,8 +102,8 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
       {done.length > 0 && (
         <section>
           <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">
-            <span className="size-2 rounded-full bg-green-600 dark:bg-green-400" />
-            Done
+            <span className={`size-2 rounded-full ${STATUS_META.done.dot}`} />
+            {STATUS_META.done.label}
           </h2>
           <ul className="space-y-3">
             {done.map((taskItem) => (

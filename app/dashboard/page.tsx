@@ -1,24 +1,15 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth, signOut } from "@/auth";
+import { signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { requireSession } from "@/lib/session";
+import { STATUS_META, STATUS_ORDER } from "@/lib/taskMeta";
 import ThemeToggle from "@/app/components/ThemeToggle";
 import { TaskStatus } from "@/app/generated/prisma/enums";
 
 export const dynamic = "force-dynamic";
 
-const statusMeta: Record<TaskStatus, { label: string; dot: string; text: string }> = {
-  todo: { label: "To Do", dot: "bg-gray-400", text: "text-gray-900 dark:text-gray-50" },
-  in_progress: { label: "In Progress", dot: "bg-blue-600 dark:bg-blue-400", text: "text-gray-900 dark:text-gray-50" },
-  done: { label: "Done", dot: "bg-green-600 dark:bg-green-400", text: "text-gray-900 dark:text-gray-50" },
-};
-
-const statusOrder: TaskStatus[] = ["in_progress", "todo", "done"];
-
 export default async function Dashboard() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
-
+  const session = await requireSession();
   const userId = session.user.id;
 
   const counts = await prisma.task.groupBy({
@@ -74,8 +65,8 @@ export default async function Dashboard() {
         </Link>
 
         <section className="grid grid-cols-3 gap-3">
-          {statusOrder.map((status) => {
-            const meta = statusMeta[status];
+          {STATUS_ORDER.map((status) => {
+            const meta = STATUS_META[status];
             return (
               <div
                 key={status}
@@ -85,7 +76,7 @@ export default async function Dashboard() {
                   <span className={`size-2 rounded-full ${meta.dot}`} />
                   <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">{meta.label}</span>
                 </div>
-                <p className={`mt-2 text-3xl font-semibold ${meta.text}`}>{countByStatus[status]}</p>
+                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-gray-50">{countByStatus[status]}</p>
               </div>
             );
           })}
