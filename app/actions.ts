@@ -7,6 +7,7 @@ import { requireUserId as getUserId } from "@/lib/session";
 import { TaskStatus } from "@/app/generated/prisma/enums";
 import { validateTaskInput } from "@/lib/validation";
 import { consumeWriteQuota } from "@/lib/rateLimit";
+import { DEFAULT_TASK_PRIORITY } from "@/lib/taskMeta";
 
 const RATE_LIMIT_MESSAGE = "Too many requests. Please slow down and try again in a minute.";
 
@@ -25,7 +26,7 @@ export async function createTask(formData: FormData): Promise<{ error: string } 
   const result = validateTaskInput({
     title: (formData.get("title") as string | null) ?? "",
     description: formData.get("description") as string | null,
-    priority: (formData.get("priority") as string | null) || "medium",
+    priority: (formData.get("priority") as string | null) || DEFAULT_TASK_PRIORITY,
     dueDateStr: (formData.get("dueDate") as string | null)?.trim() || null,
     category: formData.get("category") as string | null,
   });

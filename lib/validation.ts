@@ -1,4 +1,5 @@
 import { TaskPriority } from "@/app/generated/prisma/enums";
+import { DEFAULT_TASK_PRIORITY } from "@/lib/taskMeta";
 
 export const TASK_TITLE_MAX_LENGTH = 200;
 export const TASK_DESCRIPTION_MAX_LENGTH = 2000;
@@ -7,6 +8,7 @@ export const TASK_CATEGORY_MAX_LENGTH = 100;
 export const EMAIL_MAX_LENGTH = 254;
 // Above bcrypt's 72-byte effective limit; bounds hashing cost on oversized input.
 export const PASSWORD_MAX_LENGTH = 128;
+export const PASSWORD_MIN_LENGTH = 8;
 
 const VALID_PRIORITIES = new Set<string>(Object.values(TaskPriority));
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -57,7 +59,7 @@ export function validateTaskInput(fields: TaskInputFields): { data: TaskInput } 
     return { error: `Category must be ${TASK_CATEGORY_MAX_LENGTH} characters or fewer.` };
   }
 
-  const priority = fields.priority || "medium";
+  const priority = fields.priority || DEFAULT_TASK_PRIORITY;
   if (!VALID_PRIORITIES.has(priority)) {
     return { error: "Invalid priority." };
   }

@@ -1,9 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { handlers } from "@/auth";
-import { consumeReadQuota, consumeWriteQuota, getClientIp } from "@/lib/rateLimit";
+import { consumeReadQuota, consumeWriteQuota, getClientIp, RATE_LIMIT_MESSAGE } from "@/lib/rateLimit";
 
 function tooManyRequests() {
-  return NextResponse.json({ error: "Too many requests. Please try again in a minute." }, { status: 429 });
+  return NextResponse.json({ error: RATE_LIMIT_MESSAGE }, { status: 429 });
 }
 
 export async function GET(req: NextRequest) {

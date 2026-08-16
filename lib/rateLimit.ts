@@ -1,3 +1,19 @@
+export const RATE_LIMIT_MESSAGE = "Too many requests. Please try again in a minute.";
+
+// Failed-login lockouts: keyed by email, a longer window protects one
+// targeted account; keyed by IP, a shorter window mainly slows spray
+// attacks across many emails from the same source.
+const LOGIN_ATTEMPT_LIMIT = 5;
+const LOGIN_LOCKOUT_WINDOW_MS = 15 * 60 * 1000;
+const IP_ATTEMPT_LIMIT = 5;
+const IP_LOCKOUT_WINDOW_MS = 60 * 1000;
+
+// Request quotas: every call counts, not just failures.
+const WRITE_QUOTA_LIMIT = 30;
+const WRITE_QUOTA_WINDOW_MS = 60 * 1000;
+const READ_QUOTA_LIMIT = 60;
+const READ_QUOTA_WINDOW_MS = 60 * 1000;
+
 type Attempt = { count: number; resetAt: number };
 
 function createLimiter(maxAttempts: number, windowMs: number) {
@@ -25,13 +41,13 @@ function createLimiter(maxAttempts: number, windowMs: number) {
   };
 }
 
-const emailLimiter = createLimiter(5, 15 * 60 * 1000);
+const emailLimiter = createLimiter(LOGIN_ATTEMPT_LIMIT, LOGIN_LOCKOUT_WINDOW_MS);
 
 export const isRateLimited = emailLimiter.isRateLimited;
 export const recordFailure = emailLimiter.recordFailure;
 export const resetAttempts = emailLimiter.resetAttempts;
 
-const ipLimiter = createLimiter(5, 60 * 1000);
+const ipLimiter = createLimiter(IP_ATTEMPT_LIMIT, IP_LOCKOUT_WINDOW_MS);
 
 export const isIpRateLimited = ipLimiter.isRateLimited;
 export const recordIpFailure = ipLimiter.recordFailure;
@@ -57,8 +73,8 @@ function createRequestLimiter(maxRequests: number, windowMs: number) {
   };
 }
 
-const writeLimiter = createRequestLimiter(30, 60 * 1000);
-const readLimiter = createRequestLimiter(60, 60 * 1000);
+const writeLimiter = createRequestLimiter(WRITE_QUOTA_LIMIT, WRITE_QUOTA_WINDOW_MS);
+const readLimiter = createRequestLimiter(READ_QUOTA_LIMIT, READ_QUOTA_WINDOW_MS);
 
 /** Returns false once `key` has made 30 write requests within the last minute. */
 export function consumeWriteQuota(key: string): boolean {

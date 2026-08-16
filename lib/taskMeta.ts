@@ -1,5 +1,7 @@
 import { TaskPriority, TaskStatus } from "@/app/generated/prisma/enums";
 
+export const DEFAULT_TASK_PRIORITY: TaskPriority = "medium";
+
 export const STATUS_META: Record<
   TaskStatus,
   { label: string; dot: string; badge: string; accent: string }

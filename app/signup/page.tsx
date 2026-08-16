@@ -7,6 +7,7 @@ import Link from "next/link";
 import AuthEmailField from "@/app/components/auth/AuthEmailField";
 import AuthPasswordField from "@/app/components/auth/AuthPasswordField";
 import AuthFormError from "@/app/components/auth/AuthFormError";
+import { PASSWORD_MIN_LENGTH } from "@/lib/validation";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -62,8 +63,8 @@ export default function SignupPage() {
           <AuthEmailField />
           <AuthPasswordField
             autoComplete="new-password"
-            minLength={8}
-            hint="(8+ chars, upper, lower, number, symbol)"
+            minLength={PASSWORD_MIN_LENGTH}
+            hint={`(${PASSWORD_MIN_LENGTH}+ chars, upper, lower, number, symbol)`}
           />
 
           <button

@@ -1,4 +1,5 @@
 import { TASK_CATEGORY_MAX_LENGTH } from "@/lib/validation";
+import { DEFAULT_TASK_PRIORITY } from "@/lib/taskMeta";
 
 type Props = {
   pending: boolean;
@@ -42,7 +43,7 @@ export default function NewTaskMetaFields({ pending }: Props) {
           <select
             id="priority"
             name="priority"
-            defaultValue="medium"
+            defaultValue={DEFAULT_TASK_PRIORITY}
             className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-700 dark:border-gray-700 dark:text-gray-50"
           >
             <option value="low">Low</option>

@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { PASSWORD_MAX_LENGTH, validateEmail } from "@/lib/validation";
-import { consumeWriteQuota, getClientIp } from "@/lib/rateLimit";
+import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH, validateEmail } from "@/lib/validation";
+import { consumeWriteQuota, getClientIp, RATE_LIMIT_MESSAGE } from "@/lib/rateLimit";
+
+// OWASP-recommended minimum bcrypt work factor; the cost is embedded in the
+// hash itself, so raising this later doesn't invalidate existing hashes.
+const BCRYPT_COST_FACTOR = 12;
 
 function validatePassword(password: string): string | null {
-  if (password.length < 8) return "Password must be at least 8 characters.";
+  if (password.length < PASSWORD_MIN_LENGTH) {
+    return `Password must be at least ${PASSWORD_MIN_LENGTH} characters.`;
+  }
   if (password.length > PASSWORD_MAX_LENGTH) {
     return `Password must be ${PASSWORD_MAX_LENGTH} characters or fewer.`;
   }
@@ -19,10 +25,7 @@ function validatePassword(password: string): string | null {
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
   if (!consumeWriteQuota(`signup:${ip}`)) {
-    return NextResponse.json(
-      { error: "Too many requests. Please try again in a minute." },
-      { status: 429 },
-    );
+    return NextResponse.json({ error: RATE_LIMIT_MESSAGE }, { status: 429 });
   }
 
   const body = await req.json().catch(() => null);
@@ -49,7 +52,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "An account with that email already exists." }, { status: 400 });
   }
 
-  const hashed = await bcrypt.hash(password, 12);
+  const hashed = await bcrypt.hash(password, BCRYPT_COST_FACTOR);
   await prisma.user.create({ data: { email: normalizedEmail, password: hashed } });
 
   return NextResponse.json({ success: true });
