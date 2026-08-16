@@ -6,8 +6,8 @@ vi.mock("@/app/actions", () => ({
   deleteTask: vi.fn(),
 }));
 
-import TaskList from "./TaskList";
 import { TaskPriority, TaskStatus } from "@/app/generated/prisma/enums";
+import TaskList from "./TaskList";
 
 type Task = {
   id: number;

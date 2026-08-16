@@ -9,9 +9,9 @@ vi.mock("@/lib/prisma", () => ({
 }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 
+import { revalidatePath } from "next/cache";
 import { auth, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
 import { createTask, deleteTask, cycleStatus, deleteAccount } from "./actions";
 
 function formData(fields: Record<string, string>) {

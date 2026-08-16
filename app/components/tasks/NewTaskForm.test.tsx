@@ -6,12 +6,12 @@ vi.mock("@/app/actions", () => ({
 }));
 
 import { createTask } from "@/app/actions";
-import NewTaskForm from "./NewTaskForm";
 import {
   TASK_CATEGORY_MAX_LENGTH,
   TASK_DESCRIPTION_MAX_LENGTH,
   TASK_TITLE_MAX_LENGTH,
 } from "@/lib/validation";
+import NewTaskForm from "./NewTaskForm";
 
 function fillTitle(value: string) {
   fireEvent.change(screen.getByLabelText(/title/i), { target: { value } });

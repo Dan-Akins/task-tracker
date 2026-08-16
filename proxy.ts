@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import { NextResponse, type NextFetchEvent, type NextProxy, type NextRequest } from "next/server";
-import { authConfig } from "./auth.config";
+import { authConfig } from "@/auth.config";
 
 const ALLOWED_ORIGINS = [
   // Confirmed via `vercel alias ls` — task-tracker.vercel.app was never

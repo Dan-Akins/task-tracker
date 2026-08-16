@@ -19,8 +19,8 @@ const envFile = process.argv[2] ?? ".env.local";
 config({ path: envFile });
 
 async function main() {
-  const { exportDatabase } = await import("../lib/backup");
-  const { prisma } = await import("../lib/prisma");
+  const { exportDatabase } = await import("@/lib/backup");
+  const { prisma } = await import("@/lib/prisma");
 
   const backup = await exportDatabase();
   const dateStamp = backup.exportedAt.slice(0, 10);
