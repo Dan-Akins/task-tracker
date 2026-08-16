@@ -1,5 +1,6 @@
-import TaskCard from "@/app/components/tasks/TaskCard";
-import { PRIORITY_META, STATUS_META } from "@/lib/taskMeta";
+import TaskSection from "@/app/components/tasks/TaskSection";
+import { PRIORITY_META, STATUS_ORDER } from "@/lib/taskMeta";
+import type { TaskStatus } from "@/app/generated/prisma/enums";
 import type { Task } from "@/types/task";
 
 type Props = {
@@ -34,83 +35,16 @@ export default function TaskList({ tasks, hasAnyTasks }: Props) {
   }
 
   const byPriority = (a: Task, b: Task) => PRIORITY_META[a.priority].order - PRIORITY_META[b.priority].order;
-  const inProgress = tasks.filter((taskItem) => taskItem.status === "in_progress").sort(byPriority);
-  const todo = tasks.filter((taskItem) => taskItem.status === "todo").sort(byPriority);
-  const done = tasks.filter((taskItem) => taskItem.status === "done").sort(byPriority);
+
+  const grouped: Record<TaskStatus, Task[]> = { todo: [], in_progress: [], done: [] };
+  for (const taskItem of tasks) grouped[taskItem.status].push(taskItem);
+  for (const status of STATUS_ORDER) grouped[status].sort(byPriority);
 
   return (
     <div className="space-y-6">
-      {inProgress.length > 0 && (
-        <section>
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">
-            <span className={`size-2 rounded-full ${STATUS_META.in_progress.dot}`} />
-            {STATUS_META.in_progress.label}
-          </h2>
-          <ul className="space-y-3">
-            {inProgress.map((taskItem) => (
-              <TaskCard
-                key={taskItem.id}
-                id={taskItem.id}
-                title={taskItem.title}
-                description={taskItem.description}
-                status={taskItem.status}
-                priority={taskItem.priority}
-                dueDate={taskItem.dueDate}
-                category={taskItem.category}
-                createdAt={taskItem.createdAt}
-              />
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {todo.length > 0 && (
-        <section>
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">
-            <span className={`size-2 rounded-full ${STATUS_META.todo.dot}`} />
-            {STATUS_META.todo.label}
-          </h2>
-          <ul className="space-y-3">
-            {todo.map((taskItem) => (
-              <TaskCard
-                key={taskItem.id}
-                id={taskItem.id}
-                title={taskItem.title}
-                description={taskItem.description}
-                status={taskItem.status}
-                priority={taskItem.priority}
-                dueDate={taskItem.dueDate}
-                category={taskItem.category}
-                createdAt={taskItem.createdAt}
-              />
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {done.length > 0 && (
-        <section>
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-500 mb-3 dark:text-gray-400">
-            <span className={`size-2 rounded-full ${STATUS_META.done.dot}`} />
-            {STATUS_META.done.label}
-          </h2>
-          <ul className="space-y-3">
-            {done.map((taskItem) => (
-              <TaskCard
-                key={taskItem.id}
-                id={taskItem.id}
-                title={taskItem.title}
-                description={taskItem.description}
-                status={taskItem.status}
-                priority={taskItem.priority}
-                dueDate={taskItem.dueDate}
-                category={taskItem.category}
-                createdAt={taskItem.createdAt}
-              />
-            ))}
-          </ul>
-        </section>
-      )}
+      {STATUS_ORDER.map((status) => (
+        <TaskSection key={status} status={status} tasks={grouped[status]} />
+      ))}
     </div>
   );
 }
