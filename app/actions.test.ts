@@ -12,6 +12,7 @@ vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 import { revalidatePath } from "next/cache";
 import { auth, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { RATE_LIMIT_MESSAGE } from "@/lib/rateLimit";
 import { createTask, deleteTask, cycleStatus, deleteAccount } from "./actions";
 
 function formData(fields: Record<string, string>) {
@@ -233,7 +234,7 @@ describe("app/actions", () => {
 
       const blocked = await createTask(formData({ title: "One too many" }));
       expect(blocked).toEqual({
-        error: "Too many requests. Please slow down and try again in a minute.",
+        error: RATE_LIMIT_MESSAGE,
       });
       expect(prisma.task.create).toHaveBeenCalledTimes(30);
     });

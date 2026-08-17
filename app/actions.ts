@@ -6,10 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { requireUserId as getUserId } from "@/lib/session";
 import { TaskStatus } from "@/app/generated/prisma/enums";
 import { validateTaskInput } from "@/lib/validation";
-import { consumeWriteQuota } from "@/lib/rateLimit";
+import { consumeWriteQuota, RATE_LIMIT_MESSAGE } from "@/lib/rateLimit";
 import { DEFAULT_TASK_PRIORITY } from "@/lib/taskMeta";
-
-const RATE_LIMIT_MESSAGE = "Too many requests. Please slow down and try again in a minute.";
 
 function quotaKey(userId: string): string {
   return `user:${userId}`;

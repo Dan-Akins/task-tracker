@@ -33,3 +33,7 @@ Follow DESIGN-SYSTEM.md for all styling decisions. Do not deviate from the defin
 - types/: TypeScript type definitions
 - app/actions.ts: server actions for database operations
 - prisma/schema.prisma: database schema
+- auth.ts, auth.config.ts: NextAuth setup (credentials provider, rate-limit-gated login)
+- proxy.ts: middleware (CORS allowlist)
+- scripts/backup.ts: manual local DB backup script (`npm run backup`)
+- test/pglite-test-db.ts: shared in-memory Postgres test database used by integration tests
