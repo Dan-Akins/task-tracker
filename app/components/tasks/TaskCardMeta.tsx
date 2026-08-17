@@ -1,5 +1,6 @@
 type Props = {
   date: string;
+  updatedAtStr: string | null;
   dueDate: Date | null;
   dueDateStr: string | undefined;
   isOverdue: boolean;
@@ -10,6 +11,7 @@ type Props = {
 
 export default function TaskCardMeta({
   date,
+  updatedAtStr,
   dueDate,
   dueDateStr,
   isOverdue,
@@ -20,6 +22,12 @@ export default function TaskCardMeta({
   return (
     <div className="flex items-center gap-1.5 flex-wrap">
       <span className="text-xs font-medium text-gray-400 dark:text-gray-500">{date}</span>
+      {updatedAtStr && (
+        <>
+          <span className="text-gray-300 dark:text-gray-600" aria-hidden="true">·</span>
+          <span className="text-xs font-medium text-gray-400 dark:text-gray-500">Updated {updatedAtStr}</span>
+        </>
+      )}
       {dueDate && (
         <>
           <span className="text-gray-300 dark:text-gray-600" aria-hidden="true">·</span>

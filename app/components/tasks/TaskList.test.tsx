@@ -18,6 +18,7 @@ type Task = {
   dueDate: Date | null;
   category: string | null;
   createdAt: Date;
+  updatedAt: Date;
 };
 
 function makeTask(overrides: Partial<Task> & { id: number; title: string }): Task {
@@ -28,6 +29,7 @@ function makeTask(overrides: Partial<Task> & { id: number; title: string }): Tas
     dueDate: null,
     category: null,
     createdAt: new Date("2026-01-01"),
+    updatedAt: new Date("2026-01-01"),
     ...overrides,
   };
 }

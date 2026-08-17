@@ -26,7 +26,7 @@ const nextAction: Record<TaskStatus, { label: string; style: string }> = {
 
 type Props = Task;
 
-export default function TaskCard({ id, title, description, status, priority, dueDate, category, createdAt }: Props) {
+export default function TaskCard({ id, title, description, status, priority, dueDate, category, createdAt, updatedAt }: Props) {
   const [pending, startTransition] = useTransition();
 
   function handleCycle() {
@@ -37,6 +37,11 @@ export default function TaskCard({ id, title, description, status, priority, due
     month: "short",
     day: "numeric",
   });
+
+  const updatedAtStr =
+    updatedAt.getTime() !== createdAt.getTime()
+      ? updatedAt.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+      : null;
 
   const isOverdue = Boolean(dueDate && status !== "done" && new Date() > dueDate);
   const dueDateStr = dueDate?.toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -64,6 +69,7 @@ export default function TaskCard({ id, title, description, status, priority, due
         <div className="flex items-center justify-between gap-4">
           <TaskCardMeta
             date={date}
+            updatedAtStr={updatedAtStr}
             dueDate={dueDate}
             dueDateStr={dueDateStr}
             isOverdue={isOverdue}

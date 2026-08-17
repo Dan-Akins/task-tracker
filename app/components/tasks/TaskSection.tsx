@@ -31,6 +31,7 @@ export default function TaskSection({ status, tasks }: Props) {
             dueDate={taskItem.dueDate}
             category={taskItem.category}
             createdAt={taskItem.createdAt}
+            updatedAt={taskItem.updatedAt}
           />
         ))}
       </ul>

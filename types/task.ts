@@ -9,4 +9,5 @@ export type Task = {
   dueDate: Date | null;
   category: string | null;
   createdAt: Date;
+  updatedAt: Date;
 };
