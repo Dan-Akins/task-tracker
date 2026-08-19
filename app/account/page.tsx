@@ -1,11 +1,20 @@
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
+import { isPro, SUBSCRIPTION_STATUS_META } from "@/lib/subscription";
 import DeleteAccountButton from "@/app/components/account/DeleteAccountButton";
+import UpgradeButton from "@/app/components/billing/UpgradeButton";
+import ManageBillingButton from "@/app/components/billing/ManageBillingButton";
 
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
   const session = await requireSession();
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: session.user.id },
+    select: { subscriptionStatus: true },
+  });
+  const planMeta = SUBSCRIPTION_STATUS_META[user.subscriptionStatus];
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 dark:bg-gray-900">
@@ -27,6 +36,20 @@ export default async function AccountPage() {
         <section className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 space-y-1 dark:bg-gray-800 dark:border-gray-700">
           <p className="text-sm font-medium text-gray-700 dark:text-gray-400">Email</p>
           <p className="text-sm text-gray-900 dark:text-gray-50">{session.user.email}</p>
+        </section>
+
+        <section className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 space-y-3 dark:bg-gray-800 dark:border-gray-700">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-400">Plan</p>
+            <span className={`rounded-full px-2 py-1 text-xs font-medium ${planMeta.badge}`}>
+              {planMeta.label}
+            </span>
+          </div>
+          {isPro(user.subscriptionStatus) ? (
+            <ManageBillingButton />
+          ) : (
+            <UpgradeButton className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" />
+          )}
         </section>
 
         <section className="bg-white border border-red-200 rounded-lg shadow-sm p-4 space-y-3 dark:bg-gray-800 dark:border-red-900/50">

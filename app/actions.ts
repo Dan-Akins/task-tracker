@@ -8,6 +8,7 @@ import { TaskStatus } from "@/app/generated/prisma/enums";
 import { validateTaskInput } from "@/lib/validation";
 import { consumeWriteQuota, RATE_LIMIT_MESSAGE } from "@/lib/rateLimit";
 import { DEFAULT_TASK_PRIORITY } from "@/lib/taskMeta";
+import { FREE_TASK_LIMIT, isPro, UPGRADE_PROMPT_MESSAGE } from "@/lib/subscription";
 
 function quotaKey(userId: string): string {
   return `user:${userId}`;
@@ -30,6 +31,15 @@ export async function createTask(formData: FormData): Promise<{ error: string } 
   });
 
   if ("error" in result) return result;
+
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    select: { subscriptionStatus: true },
+  });
+  if (!isPro(user.subscriptionStatus)) {
+    const taskCount = await prisma.task.count({ where: { userId } });
+    if (taskCount >= FREE_TASK_LIMIT) return { error: UPGRADE_PROMPT_MESSAGE };
+  }
 
   await prisma.task.create({
     data: { ...result.data, userId },

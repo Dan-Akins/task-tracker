@@ -7,6 +7,8 @@ import NewTaskForm from "@/app/components/tasks/NewTaskForm";
 import TaskList from "@/app/components/tasks/TaskList";
 import ThemeToggle from "@/app/components/ui/ThemeToggle";
 import StatusFilter from "@/app/components/tasks/StatusFilter";
+import UpgradePrompt from "@/app/components/billing/UpgradePrompt";
+import { FREE_TASK_LIMIT, isPro } from "@/lib/subscription";
 
 export const dynamic = "force-dynamic";
 
@@ -17,16 +19,23 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
   const userId = session.user.id;
   const { status: statusFilter } = await searchParams;
 
-  const allTasks = await prisma.task.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-  });
+  const [allTasks, user] = await Promise.all([
+    prisma.task.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { subscriptionStatus: true },
+    }),
+  ]);
 
   const tasks = statusFilter
     ? allTasks.filter((t) => t.status === statusFilter)
     : allTasks;
 
   const hasAnyTasks = allTasks.length > 0;
+  const atTaskLimit = !isPro(user.subscriptionStatus) && allTasks.length >= FREE_TASK_LIMIT;
 
   async function handleSignOut() {
     "use server";
@@ -78,6 +87,8 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
             </svg>
           </Link>
         </div>
+
+        {atTaskLimit && <UpgradePrompt />}
 
         <NewTaskForm />
 

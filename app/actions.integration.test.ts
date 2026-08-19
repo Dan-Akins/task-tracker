@@ -16,6 +16,7 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/app/generated/prisma/client";
 import { createTask, deleteTask, cycleStatus, deleteAccount } from "./actions";
 import { teardownTestDb } from "../test/pglite-test-db";
+import { FREE_TASK_LIMIT, UPGRADE_PROMPT_MESSAGE } from "@/lib/subscription";
 
 function mockSession(userId: string | null) {
   if (userId === null) {
@@ -32,10 +33,10 @@ function formData(fields: Record<string, string>) {
 }
 
 let userCounter = 0;
-async function createUser() {
+async function createUser(overrides: Partial<{ subscriptionStatus: "free" | "active" | "past_due" | "canceled" }> = {}) {
   userCounter += 1;
   return prisma.user.create({
-    data: { email: `user-${userCounter}@example.com`, password: "hashed-password" },
+    data: { email: `user-${userCounter}@example.com`, password: "hashed-password", ...overrides },
   });
 }
 
@@ -67,6 +68,38 @@ describe("app/actions (integration, real database)", () => {
         status: "todo",
         userId: user.id,
       });
+    });
+
+    it("returns an upgrade error and persists nothing once a free user is at the task limit", async () => {
+      const user = await createUser();
+      mockSession(user.id);
+      await prisma.task.createMany({
+        data: Array.from({ length: FREE_TASK_LIMIT }, (_, i) => ({
+          title: `Task ${i}`,
+          userId: user.id,
+        })),
+      });
+
+      const result = await createTask(formData({ title: "One too many" }));
+
+      expect(result).toEqual({ error: UPGRADE_PROMPT_MESSAGE });
+      expect(await prisma.task.count({ where: { userId: user.id } })).toBe(FREE_TASK_LIMIT);
+    });
+
+    it("does not block a pro user at the same task count", async () => {
+      const user = await createUser({ subscriptionStatus: "active" });
+      mockSession(user.id);
+      await prisma.task.createMany({
+        data: Array.from({ length: FREE_TASK_LIMIT }, (_, i) => ({
+          title: `Task ${i}`,
+          userId: user.id,
+        })),
+      });
+
+      const result = await createTask(formData({ title: "Unlimited" }));
+
+      expect(result).toBeUndefined();
+      expect(await prisma.task.count({ where: { userId: user.id } })).toBe(FREE_TASK_LIMIT + 1);
     });
 
     it("returns an error and persists nothing when the title is missing", async () => {

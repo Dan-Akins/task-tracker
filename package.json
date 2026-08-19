@@ -10,7 +10,8 @@
     "test": "node ./node_modules/vitest/vitest.mjs run",
     "test:watch": "node ./node_modules/vitest/vitest.mjs",
     "coverage": "node ./node_modules/vitest/vitest.mjs run --coverage",
-    "backup": "node ./node_modules/tsx/dist/cli.mjs scripts/backup.ts"
+    "backup": "node ./node_modules/tsx/dist/cli.mjs scripts/backup.ts",
+    "stripe:setup": "node ./node_modules/tsx/dist/cli.mjs scripts/stripe-setup.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
@@ -22,7 +23,8 @@
     "next-auth": "^5.0.0-beta.32",
     "pg": "^8.22.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "stripe": "^22.5.0"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.5",

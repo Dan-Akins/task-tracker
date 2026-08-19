@@ -3,8 +3,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 vi.mock("@/auth", () => ({ auth: vi.fn(), signOut: vi.fn() }));
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    task: { create: vi.fn(), delete: vi.fn(), update: vi.fn(), deleteMany: vi.fn() },
-    user: { delete: vi.fn() },
+    task: { create: vi.fn(), delete: vi.fn(), update: vi.fn(), deleteMany: vi.fn(), count: vi.fn() },
+    user: { delete: vi.fn(), findUniqueOrThrow: vi.fn() },
   },
 }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
@@ -24,6 +24,10 @@ function formData(fields: Record<string, string>) {
 describe("app/actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Defaults to "active" so these tests exercise createTask's own logic
+    // without tripping the free-tier task limit; that limit is covered
+    // against a real task count in app/actions.integration.test.ts.
+    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue({ subscriptionStatus: "active" } as never);
   });
 
   describe("createTask", () => {

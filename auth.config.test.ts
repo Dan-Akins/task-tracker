@@ -64,4 +64,20 @@ describe("authConfig.callbacks.authorized", () => {
     } as never);
     expect(result).toBe(true);
   });
+
+  it("allows a logged-out user to view the pricing page", () => {
+    const result = authorized({
+      auth: null,
+      request: makeRequest("/pricing"),
+    } as never);
+    expect(result).toBe(true);
+  });
+
+  it("does not redirect a logged-in user away from the pricing page", () => {
+    const result = authorized({
+      auth: { user: { id: "1" } } as never,
+      request: makeRequest("/pricing"),
+    } as never);
+    expect(result).toBe(true);
+  });
 });
