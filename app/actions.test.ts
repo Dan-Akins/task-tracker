@@ -118,7 +118,7 @@ describe("app/actions", () => {
           userId: "u1",
         },
       });
-      expect(revalidatePath).toHaveBeenCalledWith("/");
+      expect(revalidatePath).toHaveBeenCalledWith("/dashboard");
     });
 
     it("parses a provided due date and priority", async () => {
@@ -170,7 +170,7 @@ describe("app/actions", () => {
       await deleteTask(42);
 
       expect(prisma.task.delete).toHaveBeenCalledWith({ where: { id: 42, userId: "u1" } });
-      expect(revalidatePath).toHaveBeenCalledWith("/");
+      expect(revalidatePath).toHaveBeenCalledWith("/dashboard");
     });
   });
 
@@ -195,7 +195,7 @@ describe("app/actions", () => {
         where: { id: 7, userId: "u1" },
         data: { status: expected },
       });
-      expect(revalidatePath).toHaveBeenCalledWith("/");
+      expect(revalidatePath).toHaveBeenCalledWith("/dashboard");
     });
   });
 

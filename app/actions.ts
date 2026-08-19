@@ -45,7 +45,7 @@ export async function createTask(formData: FormData): Promise<{ error: string } 
     data: { ...result.data, userId },
   });
 
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 const statusCycle: Record<TaskStatus, TaskStatus> = {
@@ -64,7 +64,7 @@ export async function deleteTask(id: number) {
     where: { id, userId },
   });
 
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 export async function cycleStatus(id: number, current: TaskStatus) {
@@ -78,7 +78,7 @@ export async function cycleStatus(id: number, current: TaskStatus) {
     data: { status: statusCycle[current] },
   });
 
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 export async function deleteAccount() {

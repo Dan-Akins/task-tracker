@@ -1,28 +1,41 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
-import { STATUS_META, STATUS_ORDER } from "@/lib/taskMeta";
+import NewTaskForm from "@/app/components/tasks/NewTaskForm";
+import TaskList from "@/app/components/tasks/TaskList";
 import ThemeToggle from "@/app/components/ui/ThemeToggle";
-import { TaskStatus } from "@/app/generated/prisma/enums";
+import StatusFilter from "@/app/components/tasks/StatusFilter";
+import UpgradePrompt from "@/app/components/billing/UpgradePrompt";
+import { FREE_TASK_LIMIT, isPro } from "@/lib/subscription";
 
 export const dynamic = "force-dynamic";
 
-export default async function Dashboard() {
+type SearchParams = Promise<{ status?: string }>;
+
+export default async function DashboardPage({ searchParams }: { searchParams: SearchParams }) {
   const session = await requireSession();
   const userId = session.user.id;
+  const { status: statusFilter } = await searchParams;
 
-  const counts = await prisma.task.groupBy({
-    by: ["status"],
-    where: { userId },
-    _count: { _all: true },
-  });
+  const [allTasks, user] = await Promise.all([
+    prisma.task.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { subscriptionStatus: true },
+    }),
+  ]);
 
-  const countByStatus: Record<TaskStatus, number> = { todo: 0, in_progress: 0, done: 0 };
-  for (const row of counts) {
-    countByStatus[row.status] = row._count._all;
-  }
-  const total = countByStatus.todo + countByStatus.in_progress + countByStatus.done;
+  const tasks = statusFilter
+    ? allTasks.filter((t) => t.status === statusFilter)
+    : allTasks;
+
+  const hasAnyTasks = allTasks.length > 0;
+  const atTaskLimit = !isPro(user.subscriptionStatus) && allTasks.length >= FREE_TASK_LIMIT;
 
   async function handleSignOut() {
     "use server";
@@ -35,9 +48,9 @@ export default async function Dashboard() {
 
         <header className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-lg font-semibold text-gray-900 sm:text-2xl dark:text-gray-50">Dashboard</h1>
+            <h1 className="text-lg font-semibold text-gray-900 sm:text-2xl dark:text-gray-50">Task Tracker</h1>
             <p className="mt-0.5 text-xs text-gray-500 sm:text-sm dark:text-gray-400">
-              {total} task{total !== 1 ? "s" : ""} total
+              {allTasks.length} task{allTasks.length !== 1 ? "s" : ""}
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -54,33 +67,36 @@ export default async function Dashboard() {
           </div>
         </header>
 
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700 transition-colors hover:bg-indigo-100 dark:border-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300 dark:hover:bg-indigo-900/50"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 18l-6-6 6-6"/>
-          </svg>
-          Back to tasks
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/stats"
+            className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700 transition-colors hover:bg-indigo-100 dark:border-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300 dark:hover:bg-indigo-900/50"
+          >
+            Stats
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </Link>
+          <Link
+            href="/account"
+            className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700 transition-colors hover:bg-indigo-100 dark:border-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300 dark:hover:bg-indigo-900/50"
+          >
+            Account
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </Link>
+        </div>
 
-        <section className="grid grid-cols-3 gap-3">
-          {STATUS_ORDER.map((status) => {
-            const meta = STATUS_META[status];
-            return (
-              <div
-                key={status}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 dark:bg-gray-800 dark:border-gray-700"
-              >
-                <div className="flex items-center gap-2">
-                  <span className={`size-2 rounded-full ${meta.dot}`} />
-                  <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">{meta.label}</span>
-                </div>
-                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-gray-50">{countByStatus[status]}</p>
-              </div>
-            );
-          })}
-        </section>
+        {atTaskLimit && <UpgradePrompt />}
+
+        <NewTaskForm />
+
+        <Suspense>
+          <StatusFilter />
+        </Suspense>
+
+        <TaskList tasks={tasks} hasAnyTasks={hasAnyTasks} />
       </div>
     </div>
   );
