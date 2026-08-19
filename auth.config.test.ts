@@ -82,6 +82,22 @@ describe("authConfig.callbacks.authorized", () => {
     expect(result).toBe(true);
   });
 
+  it("allows a logged-out user to view the terms of service", () => {
+    const result = authorized({
+      auth: null,
+      request: makeRequest("/terms"),
+    } as never);
+    expect(result).toBe(true);
+  });
+
+  it("does not redirect a logged-in user away from the terms of service", () => {
+    const result = authorized({
+      auth: { user: { id: "1" } } as never,
+      request: makeRequest("/terms"),
+    } as never);
+    expect(result).toBe(true);
+  });
+
   it("allows a logged-out user to view the pricing page", () => {
     const result = authorized({
       auth: null,

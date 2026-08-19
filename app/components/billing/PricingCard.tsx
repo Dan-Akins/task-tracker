@@ -6,16 +6,22 @@ type PricingCardProps = {
   priceSuffix?: string;
   features: string[];
   highlighted?: boolean;
+  badge?: string;
   cta: ReactNode;
 };
 
-export default function PricingCard({ name, price, priceSuffix, features, highlighted, cta }: PricingCardProps) {
+export default function PricingCard({ name, price, priceSuffix, features, highlighted, badge, cta }: PricingCardProps) {
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border p-6 flex flex-col gap-4 dark:bg-gray-800 ${
+      className={`relative bg-white rounded-lg shadow-sm border p-6 flex flex-col gap-4 dark:bg-gray-800 ${
         highlighted ? "border-blue-600 dark:border-blue-500" : "border-gray-200 dark:border-gray-700"
       }`}
     >
+      {badge && (
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">
+          {badge}
+        </span>
+      )}
       <div>
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-50">{name}</h2>
         <p className="mt-2 flex items-baseline gap-1">

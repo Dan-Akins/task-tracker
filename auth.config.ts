@@ -10,11 +10,15 @@ export const authConfig = {
       const isAuthPage =
         nextUrl.pathname === "/login" || nextUrl.pathname === "/signup";
       const isLandingPage = nextUrl.pathname === "/";
-      // /privacy and /pricing must be readable before signing up, and
-      // shouldn't redirect a logged-in visitor away either — unlike /login,
-      // /signup, and "/", they're valid to view in both auth states.
+      // /privacy, /terms, and /pricing must be readable before signing up,
+      // and shouldn't redirect a logged-in visitor away either — unlike
+      // /login, /signup, and "/", they're valid to view in both auth states.
       const isPublicPage =
-        isAuthPage || isLandingPage || nextUrl.pathname === "/privacy" || nextUrl.pathname === "/pricing";
+        isAuthPage ||
+        isLandingPage ||
+        nextUrl.pathname === "/privacy" ||
+        nextUrl.pathname === "/terms" ||
+        nextUrl.pathname === "/pricing";
 
       // The landing page at "/" is a marketing page for logged-out visitors;
       // a logged-in user gets the same treatment as hitting /login or
