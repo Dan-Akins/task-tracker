@@ -1,26 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH, validateEmail } from "@/lib/validation";
+import { BCRYPT_COST_FACTOR, validateEmail, validatePassword } from "@/lib/validation";
 import { consumeWriteQuota, getClientIp, RATE_LIMIT_MESSAGE } from "@/lib/rateLimit";
-
-// OWASP-recommended minimum bcrypt work factor; the cost is embedded in the
-// hash itself, so raising this later doesn't invalidate existing hashes.
-const BCRYPT_COST_FACTOR = 12;
-
-function validatePassword(password: string): string | null {
-  if (password.length < PASSWORD_MIN_LENGTH) {
-    return `Password must be at least ${PASSWORD_MIN_LENGTH} characters.`;
-  }
-  if (password.length > PASSWORD_MAX_LENGTH) {
-    return `Password must be ${PASSWORD_MAX_LENGTH} characters or fewer.`;
-  }
-  if (!/[A-Z]/.test(password)) return "Password must contain at least one uppercase letter.";
-  if (!/[a-z]/.test(password)) return "Password must contain at least one lowercase letter.";
-  if (!/[0-9]/.test(password)) return "Password must contain at least one number.";
-  if (!/[^A-Za-z0-9]/.test(password)) return "Password must contain at least one special character.";
-  return null;
-}
 
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);

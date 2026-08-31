@@ -8,7 +8,10 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isAuthPage =
-        nextUrl.pathname === "/login" || nextUrl.pathname === "/signup";
+        nextUrl.pathname === "/login" ||
+        nextUrl.pathname === "/signup" ||
+        nextUrl.pathname === "/forgot-password" ||
+        nextUrl.pathname === "/reset-password";
       const isLandingPage = nextUrl.pathname === "/";
       // /privacy, /terms, and /pricing must be readable before signing up,
       // and shouldn't redirect a logged-in visitor away either — unlike

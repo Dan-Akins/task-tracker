@@ -9,6 +9,13 @@ export const EMAIL_MAX_LENGTH = 254;
 // Above bcrypt's 72-byte effective limit; bounds hashing cost on oversized input.
 export const PASSWORD_MAX_LENGTH = 128;
 export const PASSWORD_MIN_LENGTH = 8;
+// OWASP-recommended minimum bcrypt work factor; the cost is embedded in the
+// hash itself, so raising this later doesn't invalidate existing hashes.
+export const BCRYPT_COST_FACTOR = 12;
+// How long a password-reset link stays valid after being emailed.
+export const PASSWORD_RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
+// Entropy of the raw reset token (before hashing) sent in the reset link.
+export const PASSWORD_RESET_TOKEN_BYTES = 32;
 
 const VALID_PRIORITIES = new Set<string>(Object.values(TaskPriority));
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -21,6 +28,20 @@ export function stripHtml(value: string): string {
 export function validateEmail(email: string): string | null {
   if (email.length > EMAIL_MAX_LENGTH) return "Enter a valid email address.";
   if (!EMAIL_PATTERN.test(email)) return "Enter a valid email address.";
+  return null;
+}
+
+export function validatePassword(password: string): string | null {
+  if (password.length < PASSWORD_MIN_LENGTH) {
+    return `Password must be at least ${PASSWORD_MIN_LENGTH} characters.`;
+  }
+  if (password.length > PASSWORD_MAX_LENGTH) {
+    return `Password must be ${PASSWORD_MAX_LENGTH} characters or fewer.`;
+  }
+  if (!/[A-Z]/.test(password)) return "Password must contain at least one uppercase letter.";
+  if (!/[a-z]/.test(password)) return "Password must contain at least one lowercase letter.";
+  if (!/[0-9]/.test(password)) return "Password must contain at least one number.";
+  if (!/[^A-Za-z0-9]/.test(password)) return "Password must contain at least one special character.";
   return null;
 }
 

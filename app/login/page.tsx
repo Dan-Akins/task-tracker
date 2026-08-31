@@ -50,6 +50,9 @@ export default function LoginPage() {
           <AuthFormError message={error} />
           <AuthEmailField />
           <AuthPasswordField autoComplete="current-password" />
+          <Link href="/forgot-password" className="text-sm text-blue-600 font-medium hover:underline -mt-2">
+            Forgot password?
+          </Link>
 
           <button
             type="submit"
