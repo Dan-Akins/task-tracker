@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { isPro } from "@/lib/subscription";
+import { isPro, FREE_PLAN, PRO_PLAN } from "@/lib/subscription";
 import PricingCard from "@/app/components/billing/PricingCard";
 import UpgradeButton from "@/app/components/billing/UpgradeButton";
 import ManageBillingButton from "@/app/components/billing/ManageBillingButton";
@@ -45,10 +45,7 @@ export default async function PricingPage({ searchParams }: { searchParams: Sear
 
         <div className="grid gap-4 sm:grid-cols-2">
           <PricingCard
-            name="Free"
-            price="$0"
-            priceSuffix="/month"
-            features={["Up to 10 tasks", "Basic task management"]}
+            {...FREE_PLAN}
             cta={
               !session ? (
                 <Link
@@ -66,11 +63,8 @@ export default async function PricingPage({ searchParams }: { searchParams: Sear
           />
 
           <PricingCard
-            name="Pro"
-            price="$5"
-            priceSuffix="/month"
+            {...PRO_PLAN}
             highlighted
-            features={["Unlimited tasks", "Priority support"]}
             cta={
               !session ? (
                 <Link

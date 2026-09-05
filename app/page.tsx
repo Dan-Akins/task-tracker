@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CalendarClock, Flag, ListChecks, Share2 } from "lucide-react";
 import PricingCard from "@/app/components/billing/PricingCard";
 import AppPreview from "@/app/components/marketing/AppPreview";
+import { FREE_PLAN, PRO_PLAN } from "@/lib/subscription";
 
 export const metadata = {
   title: "Task Tracker — Organize your work, finish what matters",
@@ -101,10 +102,7 @@ export default function LandingPage() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <PricingCard
-            name="Free"
-            price="$0"
-            priceSuffix="/month"
-            features={["Up to 10 tasks", "Basic task management"]}
+            {...FREE_PLAN}
             cta={
               <Link
                 href="/signup"
@@ -115,12 +113,9 @@ export default function LandingPage() {
             }
           />
           <PricingCard
-            name="Pro"
-            price="$5"
-            priceSuffix="/month"
+            {...PRO_PLAN}
             highlighted
             badge="Most Popular"
-            features={["Unlimited tasks", "Priority support"]}
             cta={
               <Link
                 href="/signup"

@@ -24,16 +24,28 @@ Follow DESIGN-SYSTEM.md for all styling decisions. Do not deviate from the defin
 
 ## File Structure
 - app/: pages, layouts, and route handlers (app/api/)
+- app/dashboard: authenticated task list (moved here from "/", which is now the public landing page)
+- app/billing: server actions for Stripe Checkout/Billing Portal session creation
+- app/pricing, app/terms, app/privacy, app/stats: static/account-derived marketing and info pages
+- app/forgot-password, app/reset-password: emailed password-reset flow pages
 - app/components/ui: generic reusable components
 - app/components/tasks: task-specific components
 - app/components/account: account-specific components
-- app/components/auth: shared login/signup form fields
+- app/components/auth: shared login/signup/reset-password form fields
+- app/components/billing: pricing card and upgrade/manage-billing buttons
+- app/components/marketing: landing-page-only components (e.g. app preview)
 - app/components/providers: context/session providers
 - lib/: utilities, shared constants, and auth guards
+- lib/stripe.ts: lazily-constructed Stripe client
+- lib/subscription.ts: plan data/limits and Stripe status mapping (keep in sync with app/components/billing)
+- lib/email.ts: lazily-constructed Resend client (password-reset emails)
+- lib/backup.ts: shared DB export logic used by both the cron route and scripts/backup.ts
 - types/: TypeScript type definitions
 - app/actions.ts: server actions for database operations
 - prisma/schema.prisma: database schema
 - auth.ts, auth.config.ts: NextAuth setup (credentials provider, rate-limit-gated login)
 - proxy.ts: middleware (CORS allowlist)
 - scripts/backup.ts: manual local DB backup script (`npm run backup`)
+- scripts/stripe-setup.ts: one-off script to provision Stripe product/price/webhook (`npm run stripe:setup`)
+- app/api/webhooks/stripe: Stripe webhook handler (subscription status sync)
 - test/pglite-test-db.ts: shared in-memory Postgres test database used by integration tests

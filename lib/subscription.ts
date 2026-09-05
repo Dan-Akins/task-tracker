@@ -5,6 +5,25 @@ export const FREE_TASK_LIMIT = 10;
 
 export const UPGRADE_PROMPT_MESSAGE = `You've reached the ${FREE_TASK_LIMIT}-task limit on the Free plan. Upgrade to Pro for unlimited tasks.`;
 
+export const PRO_PLAN_PRICE_USD = 5;
+
+// Shared plan display data for PricingCard, used on both the landing page and
+// /pricing — CTAs differ per page (session/subscription-aware vs. static), so
+// those stay defined at each call site instead of living here.
+export const FREE_PLAN = {
+  name: "Free",
+  price: "$0",
+  priceSuffix: "/month",
+  features: [`Up to ${FREE_TASK_LIMIT} tasks`, "Basic task management"],
+};
+
+export const PRO_PLAN = {
+  name: "Pro",
+  price: `$${PRO_PLAN_PRICE_USD}`,
+  priceSuffix: "/month",
+  features: ["Unlimited tasks", "Priority support"],
+};
+
 export function isPro(status: SubscriptionStatus): boolean {
   return status === "active";
 }
