@@ -1,21 +1,14 @@
 # Untested Functions
 
-Regenerated from a Vitest + `@vitest/coverage-v8` run (`npm run coverage`) on 2026-09-05 — 186
-tests across 22 test files, now covering the landing page, Stripe/billing integration, and
-forgot/reset-password flow added since the last pass.
+Regenerated from a Vitest + `@vitest/coverage-v8` run (`npm run coverage`) on 2026-09-05 — 203
+tests across 24 test files. Since the last pass, added `auth.test.ts` and `proxy.test.ts`, which
+bring the security-critical login/session logic and CORS/redirect middleware from 0% to 100%
+statements/functions/branches (mocking `next-auth` to capture and directly invoke the inline
+`authorize`/`jwt`/`session` callbacks and the CORS routing logic, respectively).
 
-**Overall: 58.89% statements / 56.19% branches / 50% functions / 58.91% lines.** Everything below
+**Overall: 66.5% statements / 65.41% branches / 54.47% functions / 66.43% lines.** Everything below
 has zero test coverage (or, where noted, one specific uncovered function alongside otherwise-tested
 ones), grouped by file. Full HTML report: `coverage/index.html`.
-
-## auth.ts
-- `authorize` (L25) — Credentials provider callback: rate-limit check, user lookup, bcrypt compare.
-- `jwt` (L60) — attaches `user.id` onto the JWT.
-- `session` (L64) — attaches token id onto `session.user.id`.
-
-## proxy.ts
-- `corsHeaders` (L15), `applyApiCors` (L25), and the default-exported `proxy` (L61) — the combined
-  API-CORS-allowlist + NextAuth session-redirect middleware is entirely untested (0% statements).
 
 ## app/layout.tsx
 - `RootLayout` (L22)
@@ -134,7 +127,7 @@ ones), grouped by file. Full HTML report: `coverage/index.html`.
 
 ---
 
-**Fully covered** (100% functions): `auth.config.ts`, `app/actions.ts`, `app/error.tsx`,
+**Fully covered** (100% functions): `auth.ts`, `auth.config.ts`, `proxy.ts`, `app/actions.ts`, `app/error.tsx`,
 `app/not-found.tsx`, `app/api/auth/[...nextauth]/route.ts`, `app/api/cron/backup/route.ts`,
 `app/api/webhooks/stripe/route.ts`, `app/billing/actions.ts`, `app/privacy/page.tsx`,
 `app/components/account/DeleteAccountButton.tsx`, `app/components/tasks/NewTaskDetailsFields.tsx`,
